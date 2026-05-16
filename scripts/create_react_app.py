@@ -11,11 +11,27 @@ from pathlib import Path
 
 TEXT_SUFFIXES = {
     ".css",
+    ".cjs",
     ".html",
     ".json",
     ".md",
+    ".mjs",
     ".ts",
     ".tsx",
+    ".yaml",
+    ".yml",
+}
+
+IGNORED_TEMPLATE_NAMES = {
+    "node_modules",
+    "dist",
+    "coverage",
+    ".cache",
+    ".vite",
+    "tsconfig.tsbuildinfo",
+    "tsconfig.node.tsbuildinfo",
+    "vite.config.js",
+    "vite.config.d.ts",
 }
 
 
@@ -27,7 +43,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("target_dir", help="Directory to create the new React project in.")
     parser.add_argument(
         "--name",
-        default="Business Workspace",
+        default="Business Sample",
         help="Display name used in the generated app.",
     )
     parser.add_argument(
@@ -39,7 +55,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def to_package_name(display_name: str, fallback_name: str) -> str:
-    """把业务展示名转换成 npm 可接受的包名，中文名无法转换时使用目录名兜底。"""
+    """把业务展示名转换成包管理器可接受的包名，中文名无法转换时使用目录名兜底。"""
     source_name = display_name.strip() or fallback_name
     normalized = re.sub(r"[^a-zA-Z0-9]+", "-", source_name.lower())
     package_name = normalized.strip("-")
@@ -47,7 +63,7 @@ def to_package_name(display_name: str, fallback_name: str) -> str:
         return package_name
 
     fallback_normalized = re.sub(r"[^a-zA-Z0-9]+", "-", fallback_name.lower()).strip("-")
-    return fallback_normalized or "business-workspace"
+    return fallback_normalized or "business-sample"
 
 
 def assert_target_available(target_dir: Path, force: bool) -> None:
@@ -82,6 +98,11 @@ def replace_placeholders(target_dir: Path, app_name: str, package_name: str) -> 
         path.write_text(text, encoding="utf-8")
 
 
+def ignore_template_artifacts(_directory: str, names: list[str]) -> set[str]:
+    """跳过模板验证生成物，避免脚手架把依赖目录和构建缓存复制到新项目。"""
+    return {name for name in names if name in IGNORED_TEMPLATE_NAMES}
+
+
 def main() -> None:
     """执行模板复制、占位符替换和结果提示。"""
     args = parse_args()
@@ -94,15 +115,16 @@ def main() -> None:
         raise SystemExit(f"Template not found: {template_dir}")
 
     assert_target_available(target_dir, args.force)
-    shutil.copytree(template_dir, target_dir, dirs_exist_ok=args.force)
+    shutil.copytree(template_dir, target_dir, dirs_exist_ok=args.force, ignore=ignore_template_artifacts)
     replace_placeholders(target_dir, args.name, package_name)
 
     print(f"Created React project: {target_dir}")
     print("Next steps:")
     print(f"  cd {target_dir}")
-    print("  npm install")
-    print("  npm run dev")
-    print("  npm run build")
+    print("  pnpm install")
+    print("  pnpm dev:mock")
+    print("  pnpm check")
+    print("  pnpm build:prod")
 
 
 if __name__ == "__main__":

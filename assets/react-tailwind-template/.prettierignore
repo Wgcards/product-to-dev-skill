@@ -1,0 +1,7 @@
+dist
+.cache
+.vite
+coverage
+node_modules
+.husky/_
+src/types/generated

@@ -1,0 +1,16 @@
+{
+  "summary": "状态流转成功",
+  "value": {
+    "data": {
+      "id": "item-001",
+      "name": "示例事项 A",
+      "owner": "李明",
+      "status": "in_review",
+      "statusLabel": "评估中",
+      "nextStep": "已流转到下一阶段，请补充对应资料",
+      "updatedAt": "刚刚"
+    },
+    "code": "200",
+    "codeMsg": null
+  }
+}

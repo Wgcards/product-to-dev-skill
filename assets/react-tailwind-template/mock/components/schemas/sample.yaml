@@ -1,0 +1,125 @@
+ApiResponse:
+  type: object
+  required:
+    - data
+    - code
+    - codeMsg
+  properties:
+    data: {}
+    code:
+      type: string
+      example: '200'
+    codeMsg:
+      type: string
+      nullable: true
+      example: null
+MetricItem:
+  type: object
+  required:
+    - label
+    - value
+    - delta
+    - tone
+  properties:
+    label:
+      type: string
+    value:
+      type: string
+    delta:
+      type: string
+    tone:
+      type: string
+      enum: [neutral, good, warning, danger]
+WorkflowStage:
+  type: object
+  required:
+    - name
+    - count
+    - action
+  properties:
+    name:
+      type: string
+    count:
+      type: integer
+    action:
+      type: string
+SampleItem:
+  type: object
+  required:
+    - id
+    - name
+    - owner
+    - status
+    - statusLabel
+    - nextStep
+    - updatedAt
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    owner:
+      type: string
+    status:
+      type: string
+      enum: [pending_review, in_review, in_progress, ready_to_close]
+    statusLabel:
+      type: string
+    nextStep:
+      type: string
+    updatedAt:
+      type: string
+SampleDashboardData:
+  type: object
+  required:
+    - metrics
+    - workflow
+  properties:
+    metrics:
+      type: array
+      items:
+        $ref: '#/MetricItem'
+    workflow:
+      type: array
+      items:
+        $ref: '#/WorkflowStage'
+ItemPageData:
+  type: object
+  required:
+    - records
+    - pageNo
+    - pageSize
+    - total
+  properties:
+    records:
+      type: array
+      items:
+        $ref: '#/SampleItem'
+    pageNo:
+      type: integer
+    pageSize:
+      type: integer
+    total:
+      type: integer
+SampleDashboardResponse:
+  allOf:
+    - $ref: '#/ApiResponse'
+    - type: object
+      properties:
+        data:
+          $ref: '#/SampleDashboardData'
+ItemPageResponse:
+  allOf:
+    - $ref: '#/ApiResponse'
+    - type: object
+      properties:
+        data:
+          $ref: '#/ItemPageData'
+ItemActionResponse:
+  allOf:
+    - $ref: '#/ApiResponse'
+    - type: object
+      properties:
+        data:
+          nullable: true
+          $ref: '#/SampleItem'

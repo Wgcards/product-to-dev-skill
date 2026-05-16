@@ -3,24 +3,76 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.7.1",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 127.0.0.1 --mode dev",
+    "dev:mock": "concurrently -k -n prism,vite \"pnpm mock:serve\" \"vite --host 127.0.0.1 --mode mock\"",
+    "dev:dev": "vite --host 127.0.0.1 --mode dev",
+    "dev:test": "vite --host 127.0.0.1 --mode test",
+    "mock:serve": "prism mock mock/openapi.yaml --host 127.0.0.1 --port 4010",
+    "mock:check": "node scripts/validate-openapi.mjs",
     "typecheck": "tsc -b --pretty false",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "pnpm lint && pnpm typecheck && pnpm format:check",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "build:prod": "tsc -b && vite build --mode prod",
+    "preview": "vite preview",
+    "lint-staged": "lint-staged",
+    "commitlint": "commitlint --edit",
+    "prepare": "husky"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^9.0.1",
     "@tailwindcss/vite": "^4.3.0",
+    "i18next": "^25.6.3",
     "lucide-react": "^1.14.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "tailwindcss": "^4.3.0"
+    "react-i18next": "^16.4.0",
+    "tailwindcss": "^4.3.0",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.0.1",
+    "@commitlint/config-conventional": "^21.0.1",
+    "@eslint/js": "^9.39.2",
+    "@stoplight/prism-cli": "5.14.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "typescript": "^6.0.3",
-    "vite": "^8.0.12"
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.3",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.49.0",
+    "vite": "^8.0.12",
+    "yaml": "^2.9.0"
+  },
+  "overrides": {
+    "@tootallnate/once": "3.0.1",
+    "fast-xml-parser": "5.7.0",
+    "lodash": "4.18.1",
+    "@stoplight/prism-core": "5.8.0",
+    "@stoplight/prism-http": "5.12.0",
+    "@stoplight/prism-http-server": "5.12.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,html,json,md,yaml,yml}": [
+      "prettier --write"
+    ]
   }
 }

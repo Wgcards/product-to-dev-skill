@@ -1,4 +1,4 @@
 interface:
   display_name: "Product-to-Dev Skill"
-  short_description: "Turn business requirements into a full React, mock, Java-doc, API, and MySQL handoff"
-  default_prompt: "Use $product-to-dev-skill to turn my business requirement into the full R&D handoff package: runnable React frontend, mock services, module-split Java backend development docs, REST API docs, MySQL SQL files, verification notes, and integration handoff."
+  short_description: "Turn business requirements into a full React, MUI/Prism apps plus Java, API, SQL handoff"
+  default_prompt: "Use $product-to-dev-skill to turn my business requirement into the full R&D handoff package: runnable MUI React app with Prism/OpenAPI mock, module-split Java backend development docs, REST API docs, MySQL SQL files, verification notes, and integration handoff."

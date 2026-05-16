@@ -1,0 +1,8 @@
+{
+  "summary": "表单校验错误",
+  "value": {
+    "data": null,
+    "code": "422",
+    "codeMsg": "流转备注不能超过 200 个字符"
+  }
+}

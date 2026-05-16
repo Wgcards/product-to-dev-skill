@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: __APP_NAME__ Mock API
+  version: 0.1.0
+servers:
+  - url: http://127.0.0.1:4010
+paths:
+  /api/sample/dashboard:
+    get:
+      operationId: getSampleDashboard
+      summary: 获取示例看板
+      responses:
+        '200':
+          $ref: ./components/responses/sample-dashboard.yaml
+  /api/items:
+    get:
+      operationId: listItems
+      summary: 查询重点处理事项
+      parameters:
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: pageNo
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 5
+      responses:
+        '200':
+          description: 事项分页数据
+          content:
+            application/json:
+              schema:
+                $ref: ./components/schemas/sample.yaml#/ItemPageResponse
+              examples:
+                normal:
+                  $ref: ./examples/item-page.json
+                empty:
+                  $ref: ./examples/item-empty.json
+                businessError:
+                  $ref: ./examples/item-error.json
+  /api/items/{itemId}/action:
+    post:
+      operationId: runItemAction
+      summary: 流转事项状态
+      parameters:
+        - $ref: ./components/parameters/item-id.yaml
+      requestBody:
+        $ref: ./components/requestBodies/item-action.yaml
+      responses:
+        '200':
+          description: 状态流转结果
+          content:
+            application/json:
+              schema:
+                $ref: ./components/schemas/sample.yaml#/ItemActionResponse
+              examples:
+                normal:
+                  $ref: ./examples/item-action.json
+                illegalTransition:
+                  $ref: ./examples/item-illegal-transition.json
+                validationError:
+                  $ref: ./examples/item-validation-error.json
+                unauthorized:
+                  $ref: ./examples/unauthorized.json

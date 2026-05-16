@@ -1,0 +1,6 @@
+name: itemId
+in: path
+required: true
+schema:
+  type: string
+description: 事项业务 ID。

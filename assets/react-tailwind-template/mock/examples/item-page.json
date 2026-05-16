@@ -1,0 +1,23 @@
+{
+  "summary": "正常事项分页数据",
+  "value": {
+    "data": {
+      "records": [
+        {
+          "id": "item-001",
+          "name": "示例事项 A",
+          "owner": "李明",
+          "status": "pending_review",
+          "statusLabel": "待确认",
+          "nextStep": "补充处理信息",
+          "updatedAt": "10 分钟前"
+        }
+      ],
+      "pageNo": 1,
+      "pageSize": 5,
+      "total": 1
+    },
+    "code": "200",
+    "codeMsg": null
+  }
+}

@@ -1,0 +1,16 @@
+required: true
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - operatorNote
+      properties:
+        operatorNote:
+          type: string
+          maxLength: 200
+          description: 流转备注，用于记录人工补充说明。
+    examples:
+      normal:
+        value:
+          operatorNote: 已确认处理依据和下一步责任人。

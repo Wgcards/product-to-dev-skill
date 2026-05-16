@@ -7,9 +7,11 @@
 - API docs should be split by module in `docs/api/<module-name>.md`.
 - Add `docs/backend/index.md` and `docs/api/index.md` only when multiple modules need navigation.
 - SQL files should go in `sql/`; name files by module, such as `sql/payment_order.sql`.
-- Mock data should stay inside the frontend project, defaulting to `src/mocks/mock-data.ts`.
-- Mock or API service methods should stay in `src/services/` or the existing service directory.
-- New bundled-template projects should keep real API switch logic in `src/services/api-client.ts`.
+- New-project mock data should stay in Prism examples under `mock/examples/`; do not reintroduce runtime `src/mocks/mock-data.ts` for the default template.
+- Mock or API service methods should stay in `src/features/<module>/service/` or the existing service directory for legacy projects.
+- New projects should keep Prism contracts under `mock/`.
+- New projects should keep real API switch logic in `src/shared/tools/APIClient`.
+- New projects should keep DTOs in `src/types/dto/` and locale files in `src/locale/`.
 - Do not generate unrelated template docs, empty directories, or unusable placeholder files.
 
 ## Verification Checklist
@@ -18,10 +20,22 @@ Frontend:
 
 - Dependencies installed or already present.
 - Typecheck or build passed.
+- MUI ThemeProvider wraps the app in new projects.
+- Dialogs render as floating Dialog/Drawer surfaces rather than page-body pseudo-modals.
+- Snackbar feedback defaults to top-center.
+- Form validation errors appear under the relevant form controls.
 - Routes are accessible.
 - Core interactions operate: filter/search, create/edit, detail, status action, confirmation, error, empty, and loading states.
-- Mock service returns the same fields documented in API docs.
-- `VITE_API_BASE_URL` switch and `authorization` header path are documented or implemented when a real API handoff is part of the delivery.
+- All requests go through `src/shared/tools/APIClient` in new projects, or through the existing approved request wrapper.
+- Domain fetch hooks expose at least `data`, `loading`, and `error` when generated.
+- Prism can read `mock/openapi.yaml`; OpenAPI examples are split and referenced with `$ref`.
+- Mock service returns the same fields documented in OpenAPI and API docs.
+- `.env.mock`, `.env.dev`, `.env.test`, and `.env.prod` exist for new projects.
+- `VITE_API_BASE_URL`, `VITE_PRISM_BASE_URL`, `VITE_API_MODE`, and `authorization` header paths are documented or implemented when a real API handoff is part of the delivery.
+- `zh-CN` and `en-US` locale files exist and key order is aligned for new projects.
+- The project-manager-specific check and production build pass when scripts exist, for example `pnpm check` and `pnpm build:prod` in new frontend projects.
+- When the user asks to start the project, inspect available package scripts first. If Prism/OpenAPI mock files exist and `dev:mock` exists, start with `dev:mock`; otherwise use the project's normal `dev` or `dev:dev` script.
+- After startup, if multi-environment config files exist and package scripts expose matching dev-mode commands such as `dev:mock`, `dev:dev`, `dev:test`, or scripts with `--mode <env>`, report the environment-to-command map and the environment actually started.
 - UI text does not overflow common desktop/mobile widths.
 - If frontend UI/UE/UX fell back because `ui-ux-pro-max` was unavailable, the final handoff tells the user to install UI UX Pro MAX through their standard skill installation process without adding installation instructions.
 
@@ -66,7 +80,7 @@ SQL:
 Final answers should include:
 
 - What is now usable.
-- Frontend path and run/build commands.
+- Frontend path and run/build commands, including `dev:mock` as the default start command when Prism mock support exists and the script is available, plus every detected environment start command when multi-environment dev scripts exist.
 - Backend doc path.
 - API doc path.
 - Mock data and service paths.

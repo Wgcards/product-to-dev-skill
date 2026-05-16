@@ -1,5 +1,12 @@
 # Tailwind V4 System
 
+## MUI Boundary
+
+- New React projects default to MUI for interaction components and theme ownership.
+- Tailwind v4 is optional utility styling, layout support, or legacy-template compatibility; it is not the primary component system for new projects.
+- Do not recreate MUI components with Tailwind when MUI already provides the interaction and accessibility behavior.
+- If an existing project is Tailwind-first and has no mature UI library, evaluate whether MUI should be introduced; explain impact before migrating.
+
 ## Setup
 
 Use CSS-first Tailwind v4 configuration:

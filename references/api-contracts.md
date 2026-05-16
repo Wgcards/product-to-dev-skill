@@ -5,8 +5,10 @@
 - Use REST-style HTTP APIs unless the existing project already uses another HTTP style.
 - Name paths around resources, not screens.
 - Use HTTP methods for intent: `GET` query, `POST` create or command, `PUT/PATCH` update, `DELETE` delete or close when the business permits it.
-- API docs are Markdown by default; OpenAPI or Swagger files are not required unless the user asks.
+- New projects must create an OpenAPI contract for Prism mock. Markdown API docs remain the human-readable handoff.
+- Existing projects without OpenAPI may stay Markdown-first until the user approves contract migration.
 - Every frontend mock service method must have a matching API doc entry.
+- Every new-project frontend service method must also map to `mock/openapi.yaml` path + operation.
 - Split API docs by module. Use `docs/api/<module-name>.md` by default.
 - Each endpoint must identify its module, backend service method, business rule IDs, and tables used.
 
@@ -51,6 +53,29 @@ Rules:
 - Backend business return values should focus on business data; the framework wraps `data`, `code`, and `codeMsg`.
 - Do not introduce a second response system.
 - Controller/service returns must not use raw `Map` for semantic response data; define response DTO/entity structures instead.
+
+## OpenAPI Contract
+
+New projects must generate:
+
+```text
+mock/
+  openapi.yaml
+  components/
+    schemas/
+    parameters/
+    responses/
+    requestBodies/
+  examples/
+```
+
+Rules:
+
+- `mock/openapi.yaml` is the Prism entry and references components/examples through `$ref`.
+- Do not put all schemas and examples in the entry file.
+- Keep schemas, requestBodies, responses, examples, frontend DTOs, and API docs aligned.
+- Cover normal, empty, business error, validation error, illegal transition, and permission/login examples when relevant.
+- Keep DTOs under `src/types/dto/` and hand-write them from the contract by default. Do not introduce OpenAPI-generated DTOs unless the user asks.
 
 ## Auth And Headers
 
@@ -104,6 +129,18 @@ State-change interfaces must document:
 - Cache invalidation or refresh rules.
 - MQ/event produced after the transition, including topic/event ID and payload summary.
 - Whether the operation needs confirmation in the frontend.
+- Prism error examples for illegal transitions.
+
+## Form APIs
+
+Form workflows must document:
+
+- Request DTO fields.
+- MUI form component mapping.
+- Frontend validation.
+- Backend validation.
+- OpenAPI `requestBody`.
+- Validation failure example.
 
 ## Table Impact Summary
 
