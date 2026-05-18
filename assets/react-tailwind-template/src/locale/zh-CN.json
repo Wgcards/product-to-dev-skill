@@ -1,0 +1,10 @@
+{
+  "app": {
+    "searchPlaceholder": "搜索事项、任务或负责人",
+    "todayFocus": "今日重点"
+  },
+  "feedback": {
+    "actionSuccess": "事项状态已流转，列表数据已刷新。",
+    "actionFailed": "状态流转失败"
+  }
+}

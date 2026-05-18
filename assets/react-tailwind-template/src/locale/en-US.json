@@ -1,0 +1,10 @@
+{
+  "app": {
+    "searchPlaceholder": "Search items, tasks, or owners",
+    "todayFocus": "Today focus"
+  },
+  "feedback": {
+    "actionSuccess": "Item status actiond and the list has been refreshed.",
+    "actionFailed": "Failed to action status"
+  }
+}

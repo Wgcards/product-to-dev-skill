@@ -1,0 +1,8 @@
+description: 示例看板数据
+content:
+  application/json:
+    schema:
+      $ref: ../schemas/sample.yaml#/SampleDashboardResponse
+    examples:
+      normal:
+        $ref: ../../examples/sample-dashboard.json

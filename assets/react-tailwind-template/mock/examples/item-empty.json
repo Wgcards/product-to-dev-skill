@@ -1,0 +1,13 @@
+{
+  "summary": "空事项分页数据",
+  "value": {
+    "data": {
+      "records": [],
+      "pageNo": 1,
+      "pageSize": 5,
+      "total": 0
+    },
+    "code": "200",
+    "codeMsg": null
+  }
+}

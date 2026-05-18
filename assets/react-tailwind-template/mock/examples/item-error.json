@@ -1,0 +1,13 @@
+{
+  "summary": "业务错误",
+  "value": {
+    "data": {
+      "records": [],
+      "pageNo": 1,
+      "pageSize": 5,
+      "total": 0
+    },
+    "code": "400",
+    "codeMsg": "模拟接口异常：请更换关键词后重试"
+  }
+}

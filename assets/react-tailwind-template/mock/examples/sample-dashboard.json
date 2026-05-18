@@ -1,0 +1,35 @@
+{
+  "summary": "正常示例看板数据",
+  "value": {
+    "data": {
+      "metrics": [
+        {
+          "label": "待流转事项",
+          "value": "24",
+          "delta": "+12%",
+          "tone": "warning"
+        },
+        {
+          "label": "本周完成",
+          "value": "8",
+          "delta": "+3",
+          "tone": "good"
+        }
+      ],
+      "workflow": [
+        {
+          "name": "待确认",
+          "count": 6,
+          "action": "补齐基础信息"
+        },
+        {
+          "name": "评估中",
+          "count": 9,
+          "action": "确认处理口径"
+        }
+      ]
+    },
+    "code": "200",
+    "codeMsg": null
+  }
+}

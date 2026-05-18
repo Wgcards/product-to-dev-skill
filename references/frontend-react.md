@@ -3,15 +3,28 @@
 ## Project Rules
 
 - Existing project wins: follow its framework, routes, request wrapper, state management, component library, mock convention, style tokens, auth, menu, and permission model.
-- New SPA projects should use Vite + React + TypeScript unless the user or target repo requires another stack.
+- Existing project package manager wins: keep `npm`, `pnpm`, `yarn`, or the monorepo tool already in use unless the user explicitly approves changing it.
+- Existing projects must be assessed before migration. If the existing UI library, mock/API system, env layout, i18n, or directories differ from the new standard, explain impact and wait for approval before broad rewrites.
+- New SPA projects should use Vite + React + TypeScript + MUI + pnpm unless the user or target repo requires another stack.
 - For a new project from this skill folder, run:
 
 ```bash
 python3 scripts/create_react_app.py /path/to/frontend --name "业务应用名称"
 ```
 
-- After scaffolding, replace the template business language and mock data before polishing visual details.
-- Keep page components as orchestration layers. Split reusable UI, service methods, mock data, types, formatters, and business constants.
+- After scaffolding, replace template business language and bring the app to the current baseline: MUI ThemeProvider, Prism/OpenAPI mock, APIClient, env files, feature/shared layout, zustand stores, DTOs, locale files, and quality tooling.
+- Keep page components as orchestration layers. Split service methods, DTOs, feature constants, hooks, Dialogs/Drawers, tables, forms, and formatters by responsibility.
+- Configure a source alias such as `@/* -> src/*` in TypeScript and every active tool that resolves imports, including Vite, test runner, lint/import checks, Storybook, Vitest/Jest, or bundler-specific config when present.
+- Do not introduce parent relative imports such as `../types`, `../../shared`, or `../../../tools`. Only same-directory imports such as `./formatters` may use relative paths; all other app imports must use the alias.
+
+## MUI Baseline
+
+- New React projects default to MUI with `@mui/material`, `@emotion/react`, and `@emotion/styled`.
+- Keep `lucide-react` only for business icons or supplemental icons when MUI icons are not the right fit.
+- Wrap the app once with MUI `ThemeProvider` from the app/provider entry.
+- Configure a light theme with semantic colors, typography, radius, spacing, and component default props.
+- Future dark mode must be controlled through the same theme and locale/provider entry.
+- Prefer MUI native components first; wrap MUI components for feature needs; use custom components only when MUI does not fit the business shape.
 
 ## Interaction Requirements
 
@@ -20,18 +33,25 @@ Frontend output must be genuinely usable, not a static screenshot:
 - Include realistic list, filter/search, create or edit, detail, status operation, confirmation, validation, feedback, loading, empty, and error behavior when relevant.
 - Lists must support pagination or a clear bounded data set; long lists need pagination, virtualization, or `content-visibility`.
 - Forms must include useful validation: required fields, length, amount, email, phone, enum values, date ranges, and cross-field rules when the domain requires them.
-- Dangerous actions must show a confirmation before committing a mock or real state change.
+- Create, edit, detail, and confirmation surfaces should use MUI `Dialog` or `Drawer`; do not flatten modal-like interaction into the page body.
+- Dangerous actions must show an MUI `Dialog` confirmation before committing a mock or real state change.
+- Success, failure, API error, and business notices should use MUI `Snackbar` + `Alert`.
+- `Snackbar` defaults to `anchorOrigin={{ vertical: "top", horizontal: "center" }}`.
+- Forms should use MUI `TextField`, `Select`, `Autocomplete`, `FormControl`, and default helper/error placement.
+- Menus, Tooltip, Tabs, Pagination, Table, Chip, and Badge should use MUI equivalents.
 - Status labels, enum mappings, money/date/file formatting, and risk tone mappings must be centralized.
 
 ## Data And Service Shape
 
 - Frontend pages must not directly hardcode business records.
-- Store mock business records in one file by default: `src/mocks/mock-data.ts`.
-- Put API-facing methods in `src/services/` or the existing service directory.
-- Put shared DTO/VO/frontend model types in `src/types/`.
-- Keep TypeScript field names aligned with API docs and mock data.
+- New projects use Prism examples under `mock/examples/` as the mock source. Legacy in-memory mock data is allowed only for existing projects or temporary fixtures.
+- Put API-facing methods inside the relevant feature service directory or the existing service directory.
+- Put API DTOs in `src/types/dto/`.
+- Keep TypeScript field names aligned with OpenAPI schemas, API docs, Prism examples, and service payloads.
 - Keep service methods stable so real HTTP calls can replace mock internals without rewriting pages.
-- Include `VITE_API_BASE_URL` support for real API switching even while mock mode is the default. In the bundled template, use `src/services/api-client.ts` and keep service method names unchanged.
+- Include env-based API switching even while mock mode is the default. New projects use `src/shared/tools/APIClient`; existing projects use their current request wrapper unless migration is approved.
+- New projects use `zustand` for store state: global app/runtime state goes in `src/shared/store/`, domain UI state goes in `src/features/<module>/store/`, and server data stays in request hooks unless it must be shared as editable client state.
+- Hooks, components, methods, services, and stores must follow single responsibility. Compose primitive hooks such as `useHttp` and `useDebounce` at the domain layer instead of creating mixed hooks like `useHttpDebounce`.
 
 ## UI Direction
 
@@ -40,7 +60,7 @@ Frontend output must be genuinely usable, not a static screenshot:
 - Operational tools should open on the working surface, not a landing-page hero.
 - Show current context, navigation, KPIs, workflow state, actionable lists, owners, freshness, and exceptions in the first screen.
 - Use quiet hierarchy, stable dimensions, readable spacing, and one primary accent.
-- Use icons from `lucide-react` for clear tool actions; keep labels for primary business commands.
+- Use MUI components for interaction surfaces and `lucide-react` for clear tool actions when an icon is needed; keep labels for primary business commands.
 - Avoid card mosaics. Use panels only for repeated entities, modals, framed tools, or clear interaction groups.
 - Keep cards at 8px radius or less unless an existing design system says otherwise.
 
@@ -53,13 +73,14 @@ Read `design-direction.md` for landing page versus app choices, `tailwind-v4-sys
 - Use React component names in PascalCase.
 - Use normal files and directories in kebab-case unless the project already uses another convention.
 - Add concise Chinese comments only where they help: mock replacement points, important TSX sections, complex business branches, service behavior, and non-obvious formatter logic.
+- Before modifying hand-written TS/TSX/React templates, follow the global TypeScript, frontend, and comments rule references configured by the project.
 
 ## Verification
 
 Run the available project checks after frontend changes:
 
 - Install dependencies if needed.
-- Run typecheck or build; common commands are `npm run typecheck`, `npm run build`, `pnpm build`, or the target repo's existing script.
+- Run typecheck or build; common commands are `pnpm typecheck`, `pnpm build`, or the target repo's existing script.
 - Start or preview locally when feasible.
 - Inspect the UI in a browser or screenshot when the environment supports it.
 
