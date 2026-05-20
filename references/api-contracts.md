@@ -9,6 +9,8 @@
 - Existing projects without OpenAPI may stay Markdown-first until the user approves contract migration.
 - Every frontend mock service method must have a matching API doc entry.
 - Every new-project frontend service method must also map to `mock/openapi.yaml` path + operation.
+- In projects with Prism/OpenAPI mock support, every implemented frontend service method must map to `mock/openapi.yaml` path + `operationId`; do not keep runtime mock endpoints only in TypeScript code.
+- API docs may describe future endpoints only when they are explicitly marked `Planned`, `Not implemented in frontend`, or `Not available in Prism mock`.
 - Split API docs by module. Use `docs/api/<module-name>.md` by default.
 - Each endpoint must identify its module, backend service method, business rule IDs, and tables used.
 
@@ -52,6 +54,7 @@ Rules:
 - On failure, frontend displays `codeMsg` directly; do not require frontend translation when backend i18n is complete.
 - Backend business return values should focus on business data; the framework wraps `data`, `code`, and `codeMsg`.
 - Do not introduce a second response system.
+- Frontend API clients must treat responses without `{ data, code, codeMsg }` as contract errors in remote/mock/dev/test/prod modes; do not silently wrap raw payloads as successful responses.
 - Controller/service returns must not use raw `Map` for semantic response data; define response DTO/entity structures instead.
 
 ## OpenAPI Contract
@@ -74,6 +77,8 @@ Rules:
 - `mock/openapi.yaml` is the Prism entry and references components/examples through `$ref`.
 - Do not put all schemas and examples in the entry file.
 - Keep schemas, requestBodies, responses, examples, frontend DTOs, and API docs aligned.
+- Schemas consumed by frontend code must explicitly define nested object fields and array item fields. Avoid broad `type: object` with `additionalProperties: true` for consumed data unless it is an intentional extension bag and the reason is documented.
+- Required fields, optional fields, enum values, error codes, and example payloads must match TypeScript DTOs and API docs.
 - Cover normal, empty, business error, validation error, illegal transition, and permission/login examples when relevant.
 - Keep DTOs under `src/types/dto/` and hand-write them from the contract by default. Do not introduce OpenAPI-generated DTOs unless the user asks.
 

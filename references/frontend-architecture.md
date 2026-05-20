@@ -5,6 +5,8 @@
 - Identify the current framework, UI library, request wrapper, mock system, env files, i18n, route/menu/auth model, and directory layout before changing code.
 - If the current project does not match the new standard, explain the difference and ask before reshaping directories, dependencies, scripts, config, or request flow.
 - Mature existing UI libraries and request wrappers win unless the user approves migration.
+- UI-library migration for pre-existing surfaces in existing or rebuilt projects is allowed only when visual and interaction parity can be preserved. If MUI would regress complex existing styling, keep that current UI layer and migrate data/contracts/architecture underneath it. Newly developed capabilities in the same project still follow MUI-first unless the user explicitly approves another component system.
+- Produce a migration status matrix for existing or rebuilt projects before broad rewrites, and do not present `non-compliant` items as done.
 - After a user declines migration in one project, keep using that project's current convention for similar follow-up work unless the user explicitly reopens the decision.
 
 ## New Project Layout
@@ -56,17 +58,16 @@ Use each folder by ownership, not by file extension alone:
 - New projects must use `src/shared/tools/APIClient` as the only request entry.
 - Pages, components, hooks, and services must not call `fetch` directly or build base URLs themselves.
 - APIClient handles base URL selection, path joining, `authorization`, JSON body, `Content-Type`, timeout, HTTP non-2xx, `code !== "200"`, network errors, and a consistent error object or message.
+- APIClient must not hardcode user-visible fallback messages. Missing config, timeout, network failure, malformed response, and other frontend-generated `codeMsg` values must use locale-backed messages or return stable error codes for the UI layer to translate.
 - Use env vars to choose mock, dev, test, or prod services; do not scatter service URLs through components.
+- In mock/dev/test/prod remote modes, APIClient must enforce the unified `{ data, code, codeMsg }` wrapper. Responses without the wrapper are contract errors; do not wrap raw payloads as successful responses.
+- When Prism/OpenAPI mock support exists, mock-mode service calls must reach Prism through APIClient or the approved request wrapper. Do not return hardcoded mock responses from runtime service code.
 
 ## Stores
 
-- New React projects use `zustand` for frontend stores.
-- Put truly global UI/runtime state in `src/shared/store/`, such as app shell preferences, global search text, current workspace selection, or user-facing runtime flags.
-- Put domain state in `src/features/<module>/store/`, such as filters, selected records, draft dialog state, or workflow UI state for that domain.
-- Keep server data in request hooks or query libraries unless the state must be shared as editable client state across distant components.
-- Do not split a domain into many tiny stores for every field. A domain store should group closely related UI state.
-- Do not let one store own unrelated concerns. If a store starts mixing global app state, multiple domains, API cache, form drafts, and modal state, split by responsibility.
-- Store actions should be small and semantic, such as `setKeyword`, `setStatus`, `openActionDialog`, and `closeActionDialog`; avoid exposing raw multi-purpose setters as the only API.
+- Read `references/store.md` before adding or changing Zustand stores, persisted state, auth/session state, locale/currency state, business-domain shared state, or APIClient runtime-context wiring.
+- Store ownership follows scope first, then business ownership: global stores live in `src/shared/store/`; domain stores live in `src/features/<module>/store/`; component-tree-only state uses local state or React Context.
+- Do not create catch-all stores. Split global business stores by business concern and keep non-business global state grouped by runtime responsibility.
 
 ## Feature Hooks
 
@@ -81,6 +82,7 @@ Use each folder by ownership, not by file extension alone:
 - Put API DTOs in `src/types/dto/`.
 - `interface` names use `I` prefix; `type` aliases use `T` prefix.
 - DTO fields must match OpenAPI schemas, API docs, Prism examples, and service payloads.
+- Required/optional flags, enums, nested object shapes, array item shapes, and error payloads must match OpenAPI. OpenAPI schemas for frontend-consumed data must be explicit enough to catch drift.
 - Do not use OpenAPI DTO generation by default; hand-write DTOs from the contract and business semantics.
 
 ## Component Split Rules

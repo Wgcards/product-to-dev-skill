@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight, Clock3, Search } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { IItemQuery, ISampleItem, IStatusOption } from '@/features/sample/types/sample';
 
 /*
@@ -62,13 +63,14 @@ export function ItemList({
   onPageChange,
   onActionRequest,
 }: IItemListProps) {
+  const { t } = useTranslation();
   const maxPage = Math.max(1, Math.ceil(total / query.pageSize));
 
   return (
     <aside className="rounded-md border border-border bg-surface p-4 sm:p-5">
       <div>
-        <h2 className="text-base font-semibold">重点处理</h2>
-        <p className="mt-1 text-sm text-muted-foreground">按更新时间和风险优先级处理。</p>
+        <h2 className="text-base font-semibold">{t('sample.list.title')}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{t('sample.list.description')}</p>
       </div>
 
       {/* 查询区：关键词和状态都通过 sample store 写入业务域筛选状态。 */}
@@ -79,7 +81,7 @@ export function ItemList({
             className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
             value={query.keyword}
             onChange={(event) => onKeywordChange(event.target.value)}
-            placeholder="搜索事项、负责人或状态"
+            placeholder={t('sample.list.searchPlaceholder')}
           />
         </label>
         <select
@@ -110,7 +112,9 @@ export function ItemList({
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h3 className="text-sm font-semibold">{item.name}</h3>
-                    <p className="mt-1 text-xs text-muted-foreground">负责人：{item.owner}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {t('sample.list.owner', { owner: item.owner })}
+                    </p>
                   </div>
                   <span className="rounded-sm bg-muted px-2 py-1 text-xs text-muted-foreground">
                     {item.statusLabel}
@@ -127,7 +131,9 @@ export function ItemList({
                     disabled={actioningId === item.id}
                     onClick={() => onActionRequest(item)}
                   >
-                    {actioningId === item.id ? '处理中' : '流转'}
+                    {actioningId === item.id
+                      ? t('sample.action.processing')
+                      : t('sample.action.move')}
                   </button>
                 </div>
               </article>
@@ -136,21 +142,19 @@ export function ItemList({
 
       {!loading && items.length === 0 ? (
         <div className="mt-5 rounded-md border border-dashed border-border bg-background p-5 text-center text-sm text-muted-foreground">
-          没有匹配的事项，请调整筛选条件。
+          {t('sample.list.empty')}
         </div>
       ) : null}
 
       {/* 分页区：上一页和下一页保持固定按钮尺寸。 */}
       <div className="mt-5 flex items-center justify-between gap-3 text-sm text-muted-foreground">
-        <span>
-          共 {total} 条，{query.pageNo}/{maxPage} 页
-        </span>
+        <span>{t('sample.list.pagination', { total, pageNo: query.pageNo, maxPage })}</span>
         <div className="flex items-center gap-2">
           <button
             className="inline-flex size-8 items-center justify-center rounded-md border border-border transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
             disabled={query.pageNo <= 1 || loading}
             onClick={() => onPageChange(query.pageNo - 1)}
-            aria-label="上一页"
+            aria-label={t('sample.list.previousPageAria')}
           >
             <ChevronLeft className="size-4" aria-hidden="true" />
           </button>
@@ -158,7 +162,7 @@ export function ItemList({
             className="inline-flex size-8 items-center justify-center rounded-md border border-border transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
             disabled={query.pageNo >= maxPage || loading}
             onClick={() => onPageChange(query.pageNo + 1)}
-            aria-label="下一页"
+            aria-label={t('sample.list.nextPageAria')}
           >
             <ChevronRight className="size-4" aria-hidden="true" />
           </button>

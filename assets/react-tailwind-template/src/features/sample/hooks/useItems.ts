@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { listItems } from '@/features/sample/service/sampleService';
 import type { IItemQuery, ISampleItem } from '@/features/sample/types/sample';
 import type { IPageResponse } from '@/types/dto/api';
@@ -29,6 +30,7 @@ export interface IUseItemsResult {
  * 拉取事项列表，只负责查询条件对应的列表请求和请求态。
  */
 export function useItems(query: IItemQuery): IUseItemsResult {
+  const { t } = useTranslation();
   const [data, setData] = useState<IPageResponse<ISampleItem> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,14 +38,17 @@ export function useItems(query: IItemQuery): IUseItemsResult {
   /*
    * 统一写入列表响应，避免自动加载和手动刷新维护两套错误分支。
    */
-  const applyItemsResponse = useCallback((response: Awaited<ReturnType<typeof listItems>>) => {
-    if (response.code === '200') {
-      setData(response.data);
-    } else {
-      setData(response.data);
-      setError(response.codeMsg ?? '事项列表加载失败');
-    }
-  }, []);
+  const applyItemsResponse = useCallback(
+    (response: Awaited<ReturnType<typeof listItems>>) => {
+      if (response.code === '200') {
+        setData(response.data);
+      } else {
+        setData(response.data);
+        setError(response.codeMsg ?? t('sample.error.itemsLoadFailed'));
+      }
+    },
+    [t],
+  );
 
   /*
    * 列表请求需要被分页、筛选和状态流转复用，因此提供稳定 refetch。

@@ -1,10 +1,71 @@
 {
   "app": {
     "searchPlaceholder": "搜索事项、任务或负责人",
-    "todayFocus": "今日重点"
+    "todayFocus": "今日重点",
+    "notificationAria": "查看提醒",
+    "settingsAria": "打开设置"
+  },
+  "api": {
+    "error": {
+      "missingBaseUrl": "缺少 VITE_API_BASE_URL 或 VITE_PRISM_BASE_URL 配置",
+      "requestFailed": "接口请求失败",
+      "requestTimeout": "接口请求超时"
+    }
   },
   "feedback": {
     "actionSuccess": "事项状态已流转，列表数据已刷新。",
     "actionFailed": "状态流转失败"
+  },
+  "sample": {
+    "content": {
+      "audience": "业务运营团队",
+      "job": "跟踪重点事项流转状态、识别风险并安排下一步动作。"
+    },
+    "todayFocusDescription": "优先处理高风险事项和超过 SLA 的处理任务。",
+    "status": {
+      "all": "全部状态",
+      "pendingReview": "待确认",
+      "inReview": "评估中",
+      "inProgress": "处理中",
+      "readyToClose": "待完成"
+    },
+    "action": {
+      "cancel": "取消",
+      "handle": "处理",
+      "move": "流转",
+      "processing": "处理中"
+    },
+    "list": {
+      "title": "重点处理",
+      "description": "按更新时间和风险优先级处理。",
+      "searchPlaceholder": "搜索事项、负责人或状态",
+      "owner": "负责人：{{owner}}",
+      "empty": "没有匹配的事项，请调整筛选条件。",
+      "pagination": "共 {{total}} 条，{{pageNo}}/{{maxPage}} 页",
+      "previousPageAria": "上一页",
+      "nextPageAria": "下一页"
+    },
+    "workflow": {
+      "title": "流程流转",
+      "description": "按阶段查看待处理对象和下一步动作。",
+      "createTask": "新建任务",
+      "createStarted": "已进入任务创建流程，请补充事项、负责人和截止时间。",
+      "stageEntered": "已进入「{{stageName}}」处理队列，请按下一步动作流转。",
+      "stepLabel": "第 {{step}} 步"
+    },
+    "dialog": {
+      "title": "确认流转状态",
+      "description": "确认将「{{itemName}}」流转到下一阶段？此操作会刷新当前事项列表。",
+      "noItem": "请选择需要流转的事项。",
+      "noteLabel": "流转备注",
+      "noteHelper": "用于记录本次流转依据，最多 200 字。",
+      "confirm": "确认流转"
+    },
+    "error": {
+      "dashboardLoadFailed": "看板数据加载失败",
+      "itemsLoadFailed": "事项列表加载失败",
+      "actionNoteRequired": "请输入流转备注。",
+      "actionNoteTooLong": "流转备注不能超过 200 字。"
+    }
   }
 }

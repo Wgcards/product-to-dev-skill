@@ -1,10 +1,71 @@
 {
   "app": {
     "searchPlaceholder": "Search items, tasks, or owners",
-    "todayFocus": "Today focus"
+    "todayFocus": "Today focus",
+    "notificationAria": "View notifications",
+    "settingsAria": "Open settings"
+  },
+  "api": {
+    "error": {
+      "missingBaseUrl": "Missing VITE_API_BASE_URL or VITE_PRISM_BASE_URL configuration",
+      "requestFailed": "API request failed",
+      "requestTimeout": "API request timed out"
+    }
   },
   "feedback": {
-    "actionSuccess": "Item status actiond and the list has been refreshed.",
-    "actionFailed": "Failed to action status"
+    "actionSuccess": "Item status updated and the list has been refreshed.",
+    "actionFailed": "Failed to update status"
+  },
+  "sample": {
+    "content": {
+      "audience": "Business operations team",
+      "job": "Track key item status, identify risks, and plan next actions."
+    },
+    "todayFocusDescription": "Prioritize high-risk items and tasks that have exceeded SLA.",
+    "status": {
+      "all": "All statuses",
+      "pendingReview": "Pending review",
+      "inReview": "In review",
+      "inProgress": "In progress",
+      "readyToClose": "Ready to close"
+    },
+    "action": {
+      "cancel": "Cancel",
+      "handle": "Handle",
+      "move": "Move",
+      "processing": "Processing"
+    },
+    "list": {
+      "title": "Priority items",
+      "description": "Handle items by update time and risk priority.",
+      "searchPlaceholder": "Search items, owners, or statuses",
+      "owner": "Owner: {{owner}}",
+      "empty": "No matching items. Adjust the filters and try again.",
+      "pagination": "{{total}} total, page {{pageNo}}/{{maxPage}}",
+      "previousPageAria": "Previous page",
+      "nextPageAria": "Next page"
+    },
+    "workflow": {
+      "title": "Workflow",
+      "description": "Review pending objects and next actions by stage.",
+      "createTask": "Create task",
+      "createStarted": "Task creation started. Add the item, owner, and due date.",
+      "stageEntered": "Entered the {{stageName}} queue. Continue with the next action.",
+      "stepLabel": "Step {{step}}"
+    },
+    "dialog": {
+      "title": "Confirm status action",
+      "description": "Move {{itemName}} to the next stage? This will refresh the current item list.",
+      "noItem": "Select an item to action.",
+      "noteLabel": "Action note",
+      "noteHelper": "Record the reason for this action, up to 200 characters.",
+      "confirm": "Confirm action"
+    },
+    "error": {
+      "dashboardLoadFailed": "Failed to load dashboard data",
+      "itemsLoadFailed": "Failed to load item list",
+      "actionNoteRequired": "Please enter an action note.",
+      "actionNoteTooLong": "Action note cannot exceed 200 characters."
+    }
   }
 }
