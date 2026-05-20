@@ -58,7 +58,7 @@ Ask one concise clarification only when one of these is blocking:
 Otherwise proceed with defaults:
 
 - App language follows the user's language.
-- Frontend uses mock data until a real backend contract or source is provided.
+- Frontend uses Prism/OpenAPI mock responses until a real backend contract or source is provided. Do not implement runtime mock endpoints as hardcoded TypeScript response objects when Prism/OpenAPI support exists.
 - New SPA projects use Vite + React + TypeScript.
 - UI is desktop-first and mobile-safe unless the user asks for mobile-first.
 - Operational products use restrained business UI rather than marketing composition.

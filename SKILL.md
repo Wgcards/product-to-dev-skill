@@ -9,20 +9,25 @@ description: 当业务人员或产品人员用自然语言描述业务需求、�
 
 Turn business, product, workflow, field-model, or system-design descriptions into reviewable and runnable delivery artifacts:
 
-- React frontend project with realistic MUI interactions, Prism/OpenAPI mock support, environment modes, i18n, and deployable build output.
+- React frontend project with realistic interactions, Prism/OpenAPI mock support, environment modes, i18n, and deployable build output.
 - Mock-driven frontend services whose data shape matches OpenAPI, API docs, DTOs, and SQL semantics.
 - Module-split Java backend development documentation, without Java implementation source files.
 - Module-split REST-style HTTP API documentation.
 - MySQL DDL SQL files that follow GX table rules.
 - Handoff notes that business, product, frontend, backend, and QA can each use.
 
-The bundled `assets/react-tailwind-template/` and `scripts/create_react_app.py` are the frontend submodule inherited from the previous business React app builder. New projects must follow the current standard even while the template is being migrated: MUI first, Prism + OpenAPI mock, unified APIClient, layered env files, feature/shared architecture, DTOs under `src/types/dto/`, and `i18next` locale files.
+The bundled `assets/react-tailwind-template/` and `scripts/create_react_app.py` are the frontend submodule inherited from the previous business React app builder. New projects must follow the current standard even while the template is being migrated: MUI first, Prism + OpenAPI mock, unified APIClient, layered env files, feature/shared architecture, DTOs under `src/types/dto/`, and `i18next` locale files. Existing or rebuilt frontend projects still use MUI-first for newly developed capabilities; only pre-existing complex UI surfaces may keep their current implementation when MUI migration cannot preserve visual and interaction parity.
 
 ## Workflow
 
+0. Verify required skill references.
+   - Before delivery work, identify the reference files required by the selected workflow path and verify that each file exists and is readable.
+   - If any required `references/*.md` file is missing or unreadable, report the exact path, explain which delivery scope is affected, and continue only with an explicit fallback. If the missing reference blocks the delivery decision, stop and ask for confirmation.
+   - Do not claim that a referenced rule was followed unless the corresponding file was actually available or a fallback was explicitly stated.
 1. Classify the request.
    - Existing project: inspect the repo first and identify its framework, UI library, routing, request wrapper, mock system, env files, i18n, auth, menu, permission model, package manager, and directory conventions.
    - If an existing project diverges from this skill's new standard, explain the current convention, target convention, impacted directories/dependencies/scripts/configs/call chains, risks, verification scope, and developer-habit impact before migrating.
+   - For existing or rebuilt projects, produce a migration status matrix before broad changes. Cover UI library, visual parity risk, routing, request wrapper, mock/OpenAPI/Prism, env modes, i18n, DTO placement, feature/shared architecture, docs/api, docs/backend, SQL, package manager, and quality tooling. Mark each item as `compliant`, `migrated`, `compatible-exception`, or `non-compliant`; do not silently finish with `non-compliant` items.
    - If the user declines a migration in the current project, continue with the existing convention for later work in that project unless the user explicitly reopens the migration.
    - New frontend app: scaffold with `python3 scripts/create_react_app.py <target-dir> --name "<display name>"`, then bring the generated project up to the current standard before treating it as done.
    - Business requirement delivery: when a business or product user describes a requirement and does not explicitly limit scope, always produce the full delivery package: frontend code, mock data/services, Java backend development docs, REST API docs, MySQL SQL, verification notes, and handoff notes.
@@ -34,6 +39,7 @@ The bundled `assets/react-tailwind-template/` and `scripts/create_react_app.py` 
 3. Build or update the React frontend.
    - Read `references/frontend-react.md` before changing frontend architecture.
    - Read `references/frontend-architecture.md` before adding feature/shared directories, APIClient, DTOs, hooks, or component splits.
+   - Read `references/store.md` before adding Zustand, global stores, feature stores, persisted state, auth/session state, locale/currency state, or APIClient runtime-context wiring.
    - Read `references/mock-and-integration.md` before adding services, mock data, OpenAPI examples, Prism behavior, or real API switch points.
    - Read `references/api-contracts.md` before creating OpenAPI or API docs.
    - Read `references/i18n.md` before adding or syncing locale files.
@@ -57,7 +63,7 @@ The bundled `assets/react-tailwind-template/` and `scripts/create_react_app.py` 
    - Maintain one SQL file per module unless the target project already has a stronger convention.
 6. Verify and hand off.
    - Read `references/delivery-verification.md` before the final response.
-   - Run the narrowest useful checks, then broaden when shared setup, routing, or generated contracts changed.
+   - Run the narrowest useful checks, then broaden when shared setup, routing, or generated contracts changed. Dependency-resolution, typecheck, lint, format, OpenAPI/mock checks, build, or dev/mock smoke failures are delivery blockers unless the user explicitly asks for a partial artifact.
    - When the user asks to start the frontend project, inspect package scripts first: if Prism/OpenAPI mock support exists and `dev:mock` is available, run `dev:mock`; otherwise run the project's normal `dev` or `dev:dev` script.
    - After starting a frontend project, if multi-environment config exists and package scripts expose matching dev-mode commands such as `dev:mock`, `dev:dev`, `dev:test`, or scripts using `--mode <env>`, tell the caller every environment's start command and identify which environment was started.
    - After frontend changes, inspect in a browser or screenshot when the environment supports it.
@@ -83,18 +89,30 @@ The bundled `assets/react-tailwind-template/` and `scripts/create_react_app.py` 
 - Make backend/API docs detailed enough for a later AI agent to start implementation from them: describe complete business rules, state transitions, validations, transaction boundaries, tables, DTOs, endpoint contracts, and error behavior.
 - Downstream skill handoff should be recommendation-oriented. Backend docs, API docs, and SQL should be self-contained and cross-linked, but later coding skills may adjust the方案 when project context requires it and should record the reason.
 - For new projects, use MUI as the default component system. Use MUI primitives first, then feature-level wrappers, and only use custom components when MUI does not match the business shape.
-- Dialogs, drawers, snackbar feedback, forms, tables, tabs, pagination, tooltips, chips, and badges should use MUI components in new projects.
+- For existing or rebuilt projects, MUI-first still applies to newly developed capabilities and newly added interaction surfaces. The exception is limited to pre-existing complex UI being refactored: if replacing custom or legacy UI with MUI would make styling, layout, animation, responsive behavior, or brand fidelity worse, keep the existing implementation and record a `compatible-exception`.
+- Dialogs, drawers, snackbar feedback, forms, tables, tabs, pagination, tooltips, chips, and badges should use MUI components in new projects and for newly developed capabilities in existing/rebuilt projects. Existing complex surfaces may keep their current components only when MUI cannot preserve established styling or interactions.
 - Keep frontend data behind feature services/hooks. Pages and components must not hardcode business records, call `fetch` directly, or assemble base URLs.
-- Keep OpenAPI schemas/examples, frontend DTOs, service fields, API docs, mock behavior, and SQL semantics consistent.
-- Use the unified API response wrapper `{ data, code, codeMsg }`; show `codeMsg` directly when `code` is not `"200"`.
+- All user-visible frontend copy must be locale-backed by default. Do not hardcode UI copy in pages, components, hooks, services, APIClient/request wrappers, helpers, stores, constants, or mock fixtures, except brand names, product names, third-party proper nouns, protocol values, comments, logs, and test descriptions.
+- Runtime mock interfaces must go through Prism. Service, hook, page, APIClient, or component code must not return hardcoded mock response objects such as `{ data, code, codeMsg }` for a real HTTP/mock endpoint. Fixtures may support tests, stories, static examples, or OpenAPI example generation, but they must not be the normal runtime fallback for mock mode.
+- Treat `mock/openapi.yaml` as the source of truth for implemented frontend/API contracts. Every implemented frontend service method must map to an OpenAPI path and `operationId`; every API doc endpoint marked implemented must exist in OpenAPI. Future endpoints in API docs must be marked `Planned`, `Not implemented in frontend`, or `Not available in Prism mock`.
+- OpenAPI schemas for frontend-consumed data must be strict enough to catch drift. Do not use broad `type: object` plus `additionalProperties: true` for consumed objects or array items unless the field is intentionally an extension bag and the reason is documented.
+- Keep OpenAPI schemas/examples, frontend DTOs, service fields, API docs, mock behavior, and SQL semantics consistent. Required/optional fields, enums, error codes, state transitions, and example payloads must match across these artifacts.
+- Use the unified API response wrapper `{ data, code, codeMsg }`; show `codeMsg` directly when `code` is not `"200"`. In remote/mock/dev/test/prod modes, APIClient must reject or normalize as a contract error when a response omits this wrapper; do not silently wrap raw payloads as success responses.
+- Backend-provided `codeMsg` may be displayed directly when backend i18n is part of the contract. Frontend-generated fallback `codeMsg`, validation messages, Snackbar text, empty/loading/error states, aria labels, placeholders, and mock display copy must come from locale dictionaries or a documented locale-aware API/mock source.
 - Use request header `authorization: <backend-token>` for auth; do not use cookies for frontend/backend auth in generated contracts.
 - New projects must generate Prism/OpenAPI mock support, MUI dependencies, `i18next`/`react-i18next`, and the agreed quality-tooling baseline. Existing projects only receive these after compatibility assessment or user approval.
 - New frontend projects default to `pnpm`. Existing frontend projects must keep their current package manager unless the user explicitly approves a package-manager migration.
 - If a project has Prism/OpenAPI mock support and exposes `dev:mock`, use `dev:mock` as the default start command when the user asks to run the project; fall back to `dev` or `dev:dev` only when `dev:mock` is absent or the user explicitly requests another mode.
 - When multi-environment dev scripts exist, surface the full command map to the caller after startup, for example `mock -> pnpm dev:mock`, `dev -> pnpm dev:dev`, and `test -> pnpm dev:test`, so the caller can confirm the active environment is expected.
+- If a required `references/*.md` file named by this skill is unavailable in the current checkout, stop and report the skill installation/checkout problem before claiming that the referenced rules were followed.
 - Frontend imports must not use parent relative paths such as `../` or `../../../`. Only same-directory imports like `./local-file` may stay relative; all cross-directory application imports must use the configured alias such as `@/features/...`, with TypeScript and build/test/lint tooling resolving the same alias.
 - Use `interface` names with an `I` prefix and `type` aliases with a `T` prefix in TypeScript when creating new TypeScript code.
-- Add concise Chinese comments to hand-written functions, components, complex branches, mock replacement points, and important TSX sections when comments help future implementers.
+- Add concise Chinese comments to newly created or modified hand-written code where the comment explains responsibility, business meaning, boundary behavior, or future replacement points.
+- Comment exported functions, hooks, components, request/runtime wrappers, shared utilities, non-obvious formatters, complex branches, state transitions, compatibility logic, mock replacement points, and important TSX/Vue template sections.
+- For TypeScript `interface`, `type`, enum, and DTO fields, add business-meaning comments when the shape is API-facing, cross-module, or not immediately obvious. Include enum value meaning, units, formats, optional conditions, and value ranges when relevant.
+- Prefer short multi-line Chinese comments for functions, hooks, components, and type fields so editor hover text is useful.
+- Do not add noisy comments to purely decorative nodes, obvious one-line local variables, trivial JSX wrappers, generated files, lock files, binary assets, or third-party/vendor code.
+- If the target project has stricter comment rules, follow the stricter project rules and mention any unavoidable gap in the final handoff.
 
 ## Resource Map
 
@@ -104,6 +122,7 @@ The bundled `assets/react-tailwind-template/` and `scripts/create_react_app.py` 
 - `references/module-documentation.md`: module splitting, AI-readable documentation style, traceability, and implementation-ready doc rules.
 - `references/frontend-react.md`: React project, MUI interaction, typing, UI, and existing-project compatibility rules.
 - `references/frontend-architecture.md`: feature/shared architecture, APIClient, hooks, DTO placement, and component split rules.
+- `references/store.md`: Zustand store ownership, persistence, global/domain/component state boundaries, and APIClient runtime context rules.
 - `references/mock-and-integration.md`: Prism/OpenAPI mock, service layer, unified response, examples, and real API switch guidance.
 - `references/i18n.md`: i18next/react-i18next setup and self-contained locale dictionary sync workflow.
 - `references/quality-tooling.md`: ESLint, Prettier, EditorConfig, Commitlint, Husky, lint-staged, and check scripts.

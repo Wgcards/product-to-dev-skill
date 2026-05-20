@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ItemActionDialog } from '@/features/sample/components/ItemActionDialog';
 import { ItemList } from '@/features/sample/components/ItemList';
 import { MetricRail } from '@/features/sample/components/MetricRail';
 import { WorkflowBoard } from '@/features/sample/components/WorkflowBoard';
-import { itemStatusOptions } from '@/features/sample/constants/sampleContent';
+import { createItemStatusOptions } from '@/features/sample/constants/sampleContent';
 import { useItemAction } from '@/features/sample/hooks/useItemAction';
 import { useItems } from '@/features/sample/hooks/useItems';
 import { useSampleDashboard } from '@/features/sample/hooks/useSampleDashboard';
@@ -25,6 +26,8 @@ export interface ISamplePageProps {
  * 编排首屏业务看板，把指标、流程、处理列表和状态流转串联起来。
  */
 export function SamplePage({ content }: ISamplePageProps) {
+  const { t } = useTranslation();
+  const itemStatusOptions = createItemStatusOptions(t);
   const itemQuery = useSampleStore((state) => state.itemQuery);
   const pendingActionItem = useSampleStore((state) => state.pendingActionItem);
   const setKeyword = useSampleStore((state) => state.setKeyword);
@@ -100,12 +103,12 @@ export function SamplePage({ content }: ISamplePageProps) {
     const normalizedActionNote = actionNote.trim();
 
     if (!normalizedActionNote) {
-      setActionNoteError('请输入流转备注。');
+      setActionNoteError(t('sample.error.actionNoteRequired'));
       return;
     }
 
     if (normalizedActionNote.length > 200) {
-      setActionNoteError('流转备注不能超过 200 字。');
+      setActionNoteError(t('sample.error.actionNoteTooLong'));
       return;
     }
 
@@ -113,14 +116,14 @@ export function SamplePage({ content }: ISamplePageProps) {
 
     if (response.code === '200') {
       showFeedback({
-        message: '事项状态已流转，列表数据已刷新。',
+        message: t('feedback.actionSuccess'),
         severity: 'success',
       });
       closeActionDialogWithFormReset();
       await items.refetch();
     } else {
       showFeedback({
-        message: response.codeMsg ?? '状态流转失败',
+        message: response.codeMsg ?? t('feedback.actionFailed'),
         severity: 'error',
       });
     }
@@ -139,9 +142,9 @@ export function SamplePage({ content }: ISamplePageProps) {
         </div>
         <div className="rounded-md border border-border bg-surface p-4">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            今日重点
+            {t('app.todayFocus')}
           </p>
-          <p className="mt-2 text-sm text-foreground">优先处理高风险事项和超过 SLA 的处理任务。</p>
+          <p className="mt-2 text-sm text-foreground">{t('sample.todayFocusDescription')}</p>
         </div>
       </section>
 

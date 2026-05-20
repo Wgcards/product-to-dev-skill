@@ -1,36 +1,40 @@
 import type { ISampleContent, IStatusOption } from '@/features/sample/types/sample';
 
 /*
- * 应用静态业务内容，生成新项目后优先替换为用户提供的业务语言。
+ * 生成应用业务内容，文案从 locale 读取，避免模板复制出硬编码 UI 文案。
  */
-export const sampleContent: ISampleContent = {
-  appName: '__APP_NAME__',
-  audience: '业务运营团队',
-  job: '跟踪重点事项流转状态、识别风险并安排下一步动作。',
-};
+export function createSampleContent(t: (key: string) => string): ISampleContent {
+  return {
+    appName: '__APP_NAME__',
+    audience: t('sample.content.audience'),
+    job: t('sample.content.job'),
+  };
+}
 
 /*
- * 状态选项集中维护，避免页面中重复硬编码状态文案。
+ * 状态选项集中维护，展示文案从 locale 读取。
  */
-export const itemStatusOptions: IStatusOption[] = [
-  {
-    value: 'all',
-    label: '全部状态',
-  },
-  {
-    value: 'pending_review',
-    label: '待确认',
-  },
-  {
-    value: 'in_review',
-    label: '评估中',
-  },
-  {
-    value: 'in_progress',
-    label: '处理中',
-  },
-  {
-    value: 'ready_to_close',
-    label: '待完成',
-  },
-];
+export function createItemStatusOptions(t: (key: string) => string): IStatusOption[] {
+  return [
+    {
+      value: 'all',
+      label: t('sample.status.all'),
+    },
+    {
+      value: 'pending_review',
+      label: t('sample.status.pendingReview'),
+    },
+    {
+      value: 'in_review',
+      label: t('sample.status.inReview'),
+    },
+    {
+      value: 'in_progress',
+      label: t('sample.status.inProgress'),
+    },
+    {
+      value: 'ready_to_close',
+      label: t('sample.status.readyToClose'),
+    },
+  ];
+}

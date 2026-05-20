@@ -9,6 +9,9 @@
 - Use `$ref` from `mock/openapi.yaml`; do not pile every schema and example into the entry file.
 - All frontend service methods must map to a path + operation in `mock/openapi.yaml`.
 - Existing projects keep their current mock system unless the user approves migration.
+- If a project has Prism/OpenAPI mock support, Prism is the only runtime mock path. Service, hook, page, APIClient, or component code must not return hardcoded mock response objects for HTTP/mock endpoints.
+- Treat `mock/openapi.yaml` as the source of truth for implemented frontend/API contracts. API docs may include future endpoints only when they are marked `Planned`, `Not implemented in frontend`, or `Not available in Prism mock`.
+- Frontend-consumed schemas must define nested object fields and array item fields explicitly. Avoid broad `type: object` with `additionalProperties: true` for consumed data unless the field is intentionally an extension bag and the reason is documented.
 
 ## Mock Coverage
 
@@ -22,6 +25,7 @@ Prism examples must cover relevant workflow states:
 - Permission or login-state failure.
 
 Mock records, OpenAPI schemas, DTOs, API docs, service fields, and SQL semantics must use the same field meanings.
+Required fields, optional fields, enums, state values, error codes, and example payloads must match across OpenAPI, DTOs, service payloads, API docs, and UI handling.
 
 ## Unified API Wrapper
 
@@ -41,6 +45,7 @@ Rules:
 - `code === "200"` means success and the frontend reads `data`.
 - `code !== "200"` means failure and the frontend displays `codeMsg` directly.
 - Do not introduce a parallel response wrapper.
+- APIClient must treat a remote/mock/dev/test/prod response that omits `{ data, code, codeMsg }` as a contract error. Do not silently wrap raw payloads as successful responses.
 - Pagination should reuse the existing project model when available, such as `JaPageRespDTO`.
 
 ## Service Layer
@@ -52,12 +57,7 @@ Rules:
 - Simulate realistic loading and error states through Prism examples and UI state; do not hide contract errors in page components.
 - Return error wrappers for validation failures, illegal state transitions, or mock exception scenarios.
 - Use functional state updates in React when callbacks depend on previous state.
-
-If a temporary in-memory mock remains during migration, include a replacement comment like:
-
-```ts
-// TODO backend: GET /api/payment-orders - replace mock after Java API is ready.
-```
+- Fixtures may remain for tests, stories, static examples, or OpenAPI example generation. They must not be imported by the runtime service path as a mock-mode fallback when Prism/OpenAPI mock support exists.
 
 ## Switching From Mock To Real API
 

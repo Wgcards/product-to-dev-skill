@@ -1,4 +1,5 @@
 import type { IApiResponse } from '@/types/dto/api';
+import { i18n } from '@/locale/i18n';
 
 const requestTimeoutMs = 10000;
 
@@ -108,7 +109,7 @@ export async function APIClient<TData, TBody = unknown>(
     return {
       data: null as TData,
       code: '500',
-      codeMsg: '缺少 VITE_API_BASE_URL 或 VITE_PRISM_BASE_URL 配置',
+      codeMsg: i18n.t('api.error.missingBaseUrl'),
     };
   }
 
@@ -136,7 +137,7 @@ export async function APIClient<TData, TBody = unknown>(
     return {
       data: payload as TData,
       code: response.ok ? '200' : String(response.status),
-      codeMsg: response.ok ? null : response.statusText || '接口请求失败',
+      codeMsg: response.ok ? null : response.statusText || i18n.t('api.error.requestFailed'),
     };
   } catch (error) {
     return {
@@ -144,8 +145,8 @@ export async function APIClient<TData, TBody = unknown>(
       code: '500',
       codeMsg:
         error instanceof DOMException && error.name === 'AbortError'
-          ? '接口请求超时'
-          : '接口请求失败',
+          ? i18n.t('api.error.requestTimeout')
+          : i18n.t('api.error.requestFailed'),
     };
   } finally {
     globalThis.clearTimeout(timeoutId);

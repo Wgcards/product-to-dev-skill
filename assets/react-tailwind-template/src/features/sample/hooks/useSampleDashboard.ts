@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getSampleDashboard } from '@/features/sample/service/sampleService';
 import type { ISampleDashboardData } from '@/features/sample/types/sample';
 
@@ -24,6 +25,7 @@ export interface IUseSampleDashboardResult {
  * 加载示例看板数据，只负责 dashboard 请求和请求态管理。
  */
 export function useSampleDashboard(): IUseSampleDashboardResult {
+  const { t } = useTranslation();
   const [data, setData] = useState<ISampleDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +48,7 @@ export function useSampleDashboard(): IUseSampleDashboardResult {
       if (response.code === '200') {
         setData(response.data);
       } else {
-        setError(response.codeMsg ?? '看板数据加载失败');
+        setError(response.codeMsg ?? t('sample.error.dashboardLoadFailed'));
       }
 
       setLoading(false);
@@ -57,7 +59,7 @@ export function useSampleDashboard(): IUseSampleDashboardResult {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [t]);
 
   return {
     data,

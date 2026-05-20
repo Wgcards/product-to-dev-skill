@@ -1,5 +1,6 @@
 import { Bell, LayoutDashboard, Search, Settings } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ISampleContent } from '@/features/sample/types/sample';
 import { useAppStore } from '@/shared/store/useAppStore';
 
@@ -21,6 +22,7 @@ export interface IAppShellProps {
  * 提供稳定的应用导航、搜索入口和主体布局。
  */
 export function AppShell({ content, children }: IAppShellProps) {
+  const { t } = useTranslation();
   const globalSearchKeyword = useAppStore((state) => state.globalSearchKeyword);
   const setGlobalSearchKeyword = useAppStore((state) => state.setGlobalSearchKeyword);
 
@@ -46,7 +48,7 @@ export function AppShell({ content, children }: IAppShellProps) {
               className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
               value={globalSearchKeyword}
               onChange={(event) => setGlobalSearchKeyword(event.target.value)}
-              placeholder="搜索事项、任务或负责人"
+              placeholder={t('app.searchPlaceholder')}
             />
           </label>
 
@@ -54,13 +56,13 @@ export function AppShell({ content, children }: IAppShellProps) {
           <div className="flex items-center gap-2">
             <button
               className="inline-flex size-9 items-center justify-center rounded-md border border-border text-muted-foreground transition hover:border-primary hover:text-primary"
-              aria-label="查看提醒"
+              aria-label={t('app.notificationAria')}
             >
               <Bell className="size-4" aria-hidden="true" />
             </button>
             <button
               className="inline-flex size-9 items-center justify-center rounded-md border border-border text-muted-foreground transition hover:border-primary hover:text-primary"
-              aria-label="打开设置"
+              aria-label={t('app.settingsAria')}
             >
               <Settings className="size-4" aria-hidden="true" />
             </button>

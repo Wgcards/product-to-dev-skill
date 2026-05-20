@@ -7,6 +7,7 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { ISampleItem } from '@/features/sample/types/sample';
 
 /*
@@ -60,17 +61,19 @@ export function ItemActionDialog({
   onOperatorNoteChange,
   onConfirm,
 }: IItemActionDialogProps) {
+  const { t } = useTranslation();
+
   return (
     <Dialog open={open} onClose={loading ? undefined : onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>确认流转状态</DialogTitle>
+      <DialogTitle>{t('sample.dialog.title')}</DialogTitle>
       <DialogContent>
         <DialogContentText>
           {item
-            ? `确认将「${item.name}」流转到下一阶段？此操作会刷新当前事项列表。`
-            : '请选择需要流转的事项。'}
+            ? t('sample.dialog.description', { itemName: item.name })
+            : t('sample.dialog.noItem')}
         </DialogContentText>
         <TextField
-          label="流转备注"
+          label={t('sample.dialog.noteLabel')}
           value={operatorNote}
           required
           multiline
@@ -78,17 +81,17 @@ export function ItemActionDialog({
           fullWidth
           margin="normal"
           error={Boolean(operatorNoteError)}
-          helperText={operatorNoteError ?? '用于记录本次流转依据，最多 200 字。'}
+          helperText={operatorNoteError ?? t('sample.dialog.noteHelper')}
           disabled={loading}
           onChange={(event) => onOperatorNoteChange(event.target.value)}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={loading}>
-          取消
+          {t('sample.action.cancel')}
         </Button>
         <Button onClick={onConfirm} variant="contained" disabled={!item || loading}>
-          {loading ? '处理中' : '确认流转'}
+          {loading ? t('sample.action.processing') : t('sample.dialog.confirm')}
         </Button>
       </DialogActions>
     </Dialog>
