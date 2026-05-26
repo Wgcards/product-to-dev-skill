@@ -1,6 +1,6 @@
 ---
 name: product-to-dev-skill
-description: 当业务人员或产品人员使用自然语言描述业务需求、页面交互、数据模型、系统设计或前后端方案时使用。该 skill 用于生成可部署的 React 前端工程、前端 mock 假数据对接、按业务模块拆分且可供后续 AI 直接开发的 Java 后端开发文档、REST 风格 HTTP 接口文档和 MySQL SQL 文件；后端只生成开发文档和接口文档，不直接生成 Java 实现代码。
+description: 当业务人员或产品人员使用自然语言描述业务需求、页面交互、数据模型、系统设计或前后端方案时使用。该 skill 用于按 route/client surface 选择 Vite React SPA、Next.js SSR/BFF 或 App placeholder 前端规范，生成可部署 Web 前端工程、前端 mock 假数据对接、按业务模块拆分且可供后续 AI 直接开发的 Java 后端开发文档、REST 风格 HTTP 接口文档和 MySQL SQL 文件；后端只生成开发文档和接口文档，不直接生成 Java 实现代码。
 ---
 
 # Product-to-Dev Skill README
@@ -13,14 +13,14 @@ description: 当业务人员或产品人员使用自然语言描述业务需求�
 
 默认交付物包括：
 
-1. React 前端工程，包含 MUI 交互体系、Prism/OpenAPI mock、统一 APIClient、环境变量分层、国际化和可构建产物。
+1. Web React 前端工程，按 route 选择 Vite React SPA 或 Next.js SSR/BFF，包含 MUI 交互体系、Prism/OpenAPI mock、统一请求边界、环境变量分层、国际化和可构建产物；App lane 当前仅作为移动端范围识别和 handoff 占位。
 2. 前端 service 与 mock 契约，数据结构必须和 OpenAPI、API 文档、DTO 与 SQL 语义一致。
 3. 按业务模块拆分的 Java 后端开发文档，不生成 Java 源码。
 4. 按业务模块拆分的 REST 风格 HTTP API 文档。
 5. 符合 GX 表规范的 MySQL DDL SQL 文件。
 6. 面向业务、产品、前端、后端、测试和后续 AI 开发的交接说明。
 
-内置 `assets/react-tailwind-template/` 和 `scripts/create_react_app.py` 是从早期业务 React 应用构建器继承而来的前端子模块。新项目即使从该模板启动，也必须按当前规范补齐 MUI、Prism/OpenAPI、APIClient、环境变量、国际化、业务域拆分和质量工具链。
+内置 `assets/react-tailwind-template/` 和 `scripts/create_react_app.py` 是从早期业务 React 应用构建器继承而来的 SPA 前端子模块。新 SPA 项目即使从该模板启动，也必须按当前规范补齐 MUI、Prism/OpenAPI、APIClient、环境变量、国际化、业务域拆分和质量工具链。SSR 项目不从该 Vite 模板启动，统一走顶层 `references/ssr-*.md` 下的 Next.js App Router / BFF 规范。App 项目先通过 `references/app-frontend-architecture.md` 占位路由，不从 SPA 或 SSR 模板生成。
 
 ## 使用边界
 
@@ -30,8 +30,17 @@ description: 当业务人员或产品人员使用自然语言描述业务需求�
 4. 已有项目必须先检查仓库结构，识别既有框架、UI 库、路由、请求封装、mock、环境变量、国际化、样式、认证、菜单、权限和目录约定。
 5. 已有项目与当前新规范不一致时，先说明差异、影响目录/依赖/脚本/配置/调用链路、迁移风险和验证范围，再让用户决定是否迁移。
 6. 用户拒绝迁移后，同一项目后续默认继续沿用既有规范，除非用户明确要求改按当前新规范。
-7. 新建前端工程优先使用 `python3 scripts/create_react_app.py <target-dir> --name "<display name>"` 脚手架，并补齐当前新项目规范。
+7. 新建前端工程必须先按前端规范路由选择 SPA、SSR 或 App；只有 SPA 路径使用 `python3 scripts/create_react_app.py <target-dir> --name "<display name>"` 脚手架，SSR 路径按 `references/ssr-frontend-architecture.md` 与 `references/ssr-delivery-workflow.md` 建立 Next.js App Router 结构，App 路径当前只做 placeholder 识别和 handoff，不默认脚手架。
 8. 后端目标语言是 Java/Spring 企业栈，但本 skill 不创建 Controller、Service、Mapper、Entity、Mapper XML 或 Java 实现代码，除非用户显式改变约束。
+
+## 前端规范路由
+
+1. 所有前端脚手架、迁移或实现前，先按页面、route group、业务表面或客户端表面选择 SPA lane、SSR lane 或 App lane；混合产品要在交接说明中列出 route/client surface map。
+2. SPA lane：B 端运营、卖家中心、管理后台、CRM、配置台、企业账户等登录后工具，以及未批准迁移的既有 Vite SPA 项目，读取 `references/frontend-react.md`、`references/frontend-architecture.md` 和对应 SPA references。
+3. SSR lane：C 端公开页、商城/商品/分类/搜索/内容详情、营销承接页、可分享页面、SEO/metadata/Open Graph/sitemap/robots、服务端预取、BFF gateway、webhook/外部 REST 边界或既有 Next.js App Router 项目，读取 `references/ssr-frontend-architecture.md`、`references/ssr-delivery-workflow.md` 和必要的 `references/ssr-*.md`。
+4. App lane：iOS/Android App、React Native、Expo、原生能力、离线同步、推送通知、deep link、App 发布或移动端导航/存储需求，读取 `references/app-frontend-architecture.md`；当前状态是 placeholder，只做识别、范围记录和缺口 handoff，不默认生成 App 代码。
+5. 混合 route 默认分流：公开 `/`、商品、分类、内容、搜索、营销、分享、sitemap、robots、metadata、OG 走 SSR；登录后的 admin、console、CRM、settings、批量操作和后台流程走 SPA，除非既有壳层是 Next.js 或 SSR 收益明确；iOS/Android 客户端、离线、推送、深链和原生权限走 App lane。
+6. 用户明确指定 SPA、SSR 或 App 时按用户指定执行，但交接说明要记录默认判断、取舍和已读取的规范路径。
 
 ## 总体工作流
 
@@ -39,8 +48,9 @@ description: 当业务人员或产品人员使用自然语言描述业务需求�
 
 1. 判断是已有项目增强、新前端应用、纯文档/API/SQL 交付，还是完整业务需求交付。
 2. 对已有项目，先阅读本地代码，识别框架、菜单、路由、认证、请求、mock、样式、组件库、环境变量、国际化和命名习惯。
-3. 对模糊、多角色、多部门协作或产品化需求，优先阅读 `references/intake-and-delivery.md`。
-4. 不把业务口语直接当 UI 文案；要改写成简洁、稳定、可操作的标签、状态、筛选项、按钮、错误提示和字段名。
+3. 对新前端应用、新增 route group 或新增客户端表面，先执行前端规范路由，不允许在未说明的情况下混用 SPA/SSR/App 规范。
+4. 对模糊、多角色、多部门协作或产品化需求，优先阅读 `references/intake-and-delivery.md`。
+5. 不把业务口语直接当 UI 文案；要改写成简洁、稳定、可操作的标签、状态、筛选项、按钮、错误提示和字段名。
 
 ### 2. 构建交付范围
 
@@ -50,24 +60,26 @@ description: 当业务人员或产品人员使用自然语言描述业务需求�
 4. 在最终交付中列出关键假设和后续可调整点。
 5. 每个模块都要有明确的对象、角色、流程、状态、异常、权限、审计和下一步动作。
 
-### 3. 更新或生成 React 前端
+### 3. 更新或生成前端
 
-1. 修改前端架构前阅读 `references/frontend-react.md`。
-2. 修改目录分层、APIClient、DTO、hooks 或组件拆分前阅读 `references/frontend-architecture.md`。
-3. 增加 service、mock 数据、Prism/OpenAPI 或真实 API 切换点前阅读 `references/mock-and-integration.md`。
-4. 创建 OpenAPI 或 API 文档前阅读 `references/api-contracts.md`。
-5. 增加国际化时阅读 `references/i18n.md`。
-6. 增加质量工具链时阅读 `references/quality-tooling.md`。
-7. 前端 UI、UE、UX 设计优先使用 companion skill `ui-ux-pro-max`，用于检索产品类型、风格、字体、配色、图表、UX 和技术栈最佳实践。
-8. 如果 `ui-ux-pro-max` 当前会话不可用，继续使用 `references/design-direction.md`、`references/tailwind-v4-system.md` 和 `references/react-performance.md` 兜底，并在交接说明里提示用户按标准 skill 安装流程安装 UI UX Pro MAX；除非用户主动询问，不在本 skill 中展开安装步骤。
-9. 涉及视觉方向、Tailwind/MUI 职责边界或性能风险时，按需阅读 `references/design-direction.md`、`references/tailwind-v4-system.md`、`references/react-performance.md`。
-10. 页面必须能真实交互，不只做静态 UI；至少覆盖列表、筛选、创建或编辑、详情、状态操作、确认反馈、错误提示、空状态和加载状态。
-11. 前端数据必须从 service/mock 层取得，页面和组件不得硬编码业务记录。
-12. 新项目默认使用 Prism + OpenAPI mock，契约入口为 `mock/openapi.yaml`，examples 与 components 拆分存放。
-13. mock 或 API service 默认放在业务域 service 中，所有请求经 `src/shared/tools/APIClient`；已有项目服从既有请求封装。
-14. 新建 API DTO 放在 `src/types/dto/`，新增接口优先使用 `I` 前缀，新增 type alias 使用 `T` 前缀。
-15. hand-written 函数、组件、复杂分支、mock 替换点和重要 TSX 结构可添加简洁中文注释，但只在能帮助后续维护时添加。
-16. 不引入新依赖，除非它明显降低复杂度或匹配现有项目技术栈。
+1. SPA 路径修改前端架构前阅读 `references/frontend-react.md`。
+2. SPA 路径修改目录分层、APIClient、DTO、hooks 或组件拆分前阅读 `references/frontend-architecture.md`。
+3. SSR 路径修改 Next.js App Router、BFF、RSC/Client Component、契约、缓存、安全、运行配置、i18n 或验收门禁前，读取 `references/ssr-frontend-architecture.md` 及对应 `references/ssr-*.md`。
+4. App 路径先读取 `references/app-frontend-architecture.md`；该文件仍为 placeholder 时，只做范围识别、假设和缺口记录，不默认创建 React Native / Expo 项目。
+5. 增加 service、mock 数据、Prism/OpenAPI 或真实 API 切换点前阅读 `references/mock-and-integration.md`；SSR 路径同时阅读 `references/ssr-contracts-and-mock.md`。
+6. 创建 OpenAPI 或 API 文档前阅读 `references/api-contracts.md`。
+7. 增加国际化时阅读 `references/i18n.md`；SSR 路径同时阅读 `references/ssr-i18n.md`。
+8. 增加质量工具链时阅读 `references/quality-tooling.md`；SSR 验收同时阅读 `references/ssr-verification.md`。
+9. 前端 UI、UE、UX 设计优先使用 companion skill `ui-ux-pro-max`，用于检索产品类型、风格、字体、配色、图表、UX 和技术栈最佳实践。
+10. 如果 `ui-ux-pro-max` 当前会话不可用，继续使用 `references/design-direction.md`、`references/tailwind-v4-system.md` 和 `references/react-performance.md` 兜底，并在交接说明里提示用户按标准 skill 安装流程安装 UI UX Pro MAX；除非用户主动询问，不在本 skill 中展开安装步骤。
+11. 涉及视觉方向、Tailwind/MUI 职责边界或性能风险时，按需阅读 `references/design-direction.md`、`references/tailwind-v4-system.md`、`references/react-performance.md`。
+12. 页面必须能真实交互，不只做静态 UI；至少覆盖列表、筛选、创建或编辑、详情、状态操作、确认反馈、错误提示、空状态和加载状态。
+13. 前端数据必须从 service/mock 层取得，页面和组件不得硬编码业务记录。
+14. 新项目默认使用 Prism + OpenAPI mock，契约入口为 `mock/openapi.yaml`，examples 与 components 拆分存放。
+15. mock 或 API service 默认放在业务域 service 中，SPA 所有请求经 `src/shared/tools/APIClient`；SSR 服务端出站请求经 `src/bff/gateway`；App 路径待 App references 补齐前只记录接口与本地能力需求，已有项目服从既有请求封装。
+16. 新建 API DTO 放在 `src/types/dto/`，新增接口优先使用 `I` 前缀，新增 type alias 使用 `T` 前缀。
+17. hand-written 函数、组件、复杂分支、mock 替换点和重要 TSX 结构可添加简洁中文注释，但只在能帮助后续维护时添加。
+18. 不引入新依赖，除非它明显降低复杂度或匹配现有项目技术栈。
 
 ### 4. 生成后端和 API 文档
 
@@ -122,18 +134,18 @@ description: 当业务人员或产品人员使用自然语言描述业务需求�
 3. OpenAPI schemas/examples、前端 DTO、service 字段、API 文档、mock 行为和 SQL 语义必须保持一致。
 4. 统一 API 响应外层结构为 `{ data, code, codeMsg }`。
 5. `code === "200"` 时前端读取 `data`；`code !== "200"` 时直接展示 `codeMsg`。
-6. 鉴权使用请求头 `authorization: <backend-token>`，前后端生成契约禁止使用 cookie。
+6. 后端侧契约使用请求头 `authorization: <backend-token>`；SPA 浏览器可直接发送该 header，SSR/BFF 可在浏览器到 BFF 之间使用 httpOnly 同源 cookie，但 BFF 必须转换为后端 authorization header，且不得把 token 暴露给 Client Component props 或 JSON 响应。
 7. Controller 和 service 返参禁止直接返回 `Map`；有明确业务语义的返回结构必须定义 DTO/entity。
 8. 列表接口必须明确分页参数、排序规则、筛选条件和分页返回结构。
 9. 状态变更接口必须明确前置状态、目标状态、异常状态和幂等行为。
 10. 业务上具有唯一性的字段必须有数据库唯一约束，不能只依赖应用层校验。
-11. 新项目默认使用 MUI、Prism/OpenAPI、APIClient、环境变量分层、i18next、质量工具链；已有项目先兼容现行规范，必要时请求迁移确认。
+11. Web 新项目默认使用 MUI、Prism/OpenAPI、环境变量分层、国际化和质量工具链；SPA 使用 APIClient，SSR 使用 Next.js App Router + BFF gateway；App lane 当前只做 placeholder 路由和缺口 handoff；已有项目先兼容现行规范，必要时请求迁移确认。
 12. 不生成无关模板文档、空目录或不可使用的占位文件。
 13. 不在前端暴露真实密钥、生产 token、数据库连接或生产私有接口地址。
 
 ## 前端开发规范
 
-1. 新建前端工程优先使用 Vite + React + TypeScript + Tailwind v4 + MUI。
+1. 新建前端工程先按前端规范路由选择：SPA 使用 Vite + React + TypeScript + Tailwind v4 + MUI；SSR 使用 Next.js App Router + React Server Components + BFF gateway + MUI SSR runtime；App lane 当前只做移动端范围识别和 handoff，不默认脚手架。
 2. 目标项目已有技术栈时，必须服从目标项目。
 3. UI、UE、UX 设计优先使用 `ui-ux-pro-max`；用户只需要调用 `$product-to-dev-skill`，不用额外选择两个 skill。
 4. `ui-ux-pro-max` 不可用时，使用本 skill 的内置设计参考兜底，并提示用户按标准 skill 安装流程安装 UI UX Pro MAX。
