@@ -36,7 +36,7 @@ packages/tools/logger/
   types/        # shared log event types
 ```
 
-这只是日志工具包边界，不定义 monorepo、workspace、发布或跨应用依赖治理。
+这只是日志工具包边界；monorepo、workspace、发布或跨应用依赖治理按 `references/monorepo-workspace.md` 执行。
 
 ## Runtime Matrix
 

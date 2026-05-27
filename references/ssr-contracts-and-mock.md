@@ -11,7 +11,7 @@
 
 - 项目内复用的 DTO、endpoint id、error code 放目标项目约定的契约目录；本 SSR 规则不规定跨应用包结构。
 - 单 app 私有 DTO 可以放 `src/bff/dto` 或 `src/types/dto`，但不得在页面组件中直接消费后端 raw DTO。
-- TypeScript interface 使用 `I` 前缀，type alias 使用 `T` 前缀。
+- TypeScript interface 使用 `I` 前缀；type alias 使用语义化 PascalCase，不强制 `T` 前缀，枚举或状态联合类型使用 `OrderStatus` 这类业务名。
 - API-facing DTO 字段必须有业务含义注释，说明单位、格式、枚举值、可选条件和兼容语义。
 
 ## OpenAPI Rules

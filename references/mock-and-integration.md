@@ -3,14 +3,14 @@
 ## Prism And OpenAPI
 
 - New projects use Prism + OpenAPI as the primary mock system.
-- Create `mock/openapi.yaml` as the Prism entry.
+- Create `mock/openapi.yaml` as the Prism entry relative to the single-app root or owning app root.
 - Split contract details under `mock/components/` for schemas, parameters, responses, and requestBodies.
 - Split example payloads under `mock/examples/`.
-- Use `$ref` from `mock/openapi.yaml`; do not pile every schema and example into the entry file.
-- All frontend service methods must map to a path + operation in `mock/openapi.yaml`.
+- Use `$ref` from the owning app's `mock/openapi.yaml`; do not pile every schema and example into the entry file.
+- All frontend service methods must map to a path + operation in the owning app's `mock/openapi.yaml`.
 - Existing projects keep their current mock system unless the user approves migration.
 - If a project has Prism/OpenAPI mock support, Prism is the only runtime mock path. Service, hook, page, APIClient, or component code must not return hardcoded mock response objects for HTTP/mock endpoints.
-- Treat `mock/openapi.yaml` as the source of truth for implemented frontend/API contracts. API docs may include future endpoints only when they are marked `Planned`, `Not implemented in frontend`, or `Not available in Prism mock`.
+- Treat the owning app's `mock/openapi.yaml` as the source of truth for implemented frontend/API contracts. API docs may include future endpoints only when they are marked `Planned`, `Not implemented in frontend`, or `Not available in Prism mock`.
 - Frontend-consumed schemas must define nested object fields and array item fields explicitly. Avoid broad `type: object` with `additionalProperties: true` for consumed data unless the field is intentionally an extension bag and the reason is documented.
 
 ## Mock Coverage

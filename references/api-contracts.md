@@ -8,8 +8,8 @@
 - New projects must create an OpenAPI contract for Prism mock. Markdown API docs remain the human-readable handoff.
 - Existing projects without OpenAPI may stay Markdown-first until the user approves contract migration.
 - Every frontend mock service method must have a matching API doc entry.
-- Every new-project frontend service method must also map to `mock/openapi.yaml` path + operation.
-- In projects with Prism/OpenAPI mock support, every implemented frontend service method must map to `mock/openapi.yaml` path + `operationId`; do not keep runtime mock endpoints only in TypeScript code.
+- Every new-project frontend service method must also map to the owning app's `mock/openapi.yaml` path + operation.
+- In projects with Prism/OpenAPI mock support, every implemented frontend service method must map to the owning app's `mock/openapi.yaml` path + `operationId`; do not keep runtime mock endpoints only in TypeScript code.
 - API docs may describe future endpoints only when they are explicitly marked `Planned`, `Not implemented in frontend`, or `Not available in Prism mock`.
 - Split API docs by module. Use `docs/api/<module-name>.md` by default.
 - Each endpoint must identify its module, backend service method, business rule IDs, and tables used.
@@ -59,7 +59,7 @@ Rules:
 
 ## OpenAPI Contract
 
-New projects must generate:
+New projects must generate this structure under the project root for single-app projects, or under `apps/<app-name>/` for the owning app in monorepo projects:
 
 ```text
 mock/
@@ -74,7 +74,7 @@ mock/
 
 Rules:
 
-- `mock/openapi.yaml` is the Prism entry and references components/examples through `$ref`.
+- `mock/openapi.yaml` is the Prism entry relative to the single-app root or owning app root, and references components/examples through `$ref`.
 - Do not put all schemas and examples in the entry file.
 - Keep schemas, requestBodies, responses, examples, frontend DTOs, and API docs aligned.
 - Schemas consumed by frontend code must explicitly define nested object fields and array item fields. Avoid broad `type: object` with `additionalProperties: true` for consumed data unless it is an intentional extension bag and the reason is documented.

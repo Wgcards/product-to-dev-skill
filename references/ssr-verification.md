@@ -23,7 +23,7 @@
 SSR 项目应至少覆盖这些边界：
 
 - Client Component 不声明 async component。
-- TypeScript interface 使用 `I` 前缀，type alias 使用 `T` 前缀；DTO、view model、action state、request context、endpoint id 类型命名符合通用规则。
+- TypeScript interface 使用 `I` 前缀；type alias 使用语义化 PascalCase，不强制 `T` 前缀；DTO、view model、action state、request context、endpoint id、枚举或状态联合类型命名符合通用规则，例如 `OrderStatus`。
 - 手写函数、组件、Route Handler、Server Action、BFF gateway/service/adapter、runtime wrapper、复杂分支和类型字段有中文注释，说明职责、边界、输入输出或业务语义。
 - 跨目录 import 使用项目 alias，同目录才使用 `./`；应用代码不通过 `../` 或 `../../../` 绕过 `src/app`、`src/bff`、`src/features`、`src/shared` 边界。
 - `src/shared/**` 不依赖 `src/app/**`、`src/bff/**` 或业务 feature；BFF-only helper 放在 `src/bff/shared/**`。
@@ -114,7 +114,7 @@ SSR 项目应至少覆盖这些边界：
 - i18n 策略：next-intl 接入点、locale 来源、无 locale route、语言切换刷新范围、loading 状态、BFF locale 透传、cache locale 隔离、多语言 SEO 风险。
 - logger 落点、local/prod 与 client/server 行为、request id 生成/透传、普通日志/接口日志 schema、上游调用摘要、降级/异常日志、敏感字段脱敏、生产 client console 清除、PM2 日志策略、Web Vitals/客户端错误接入状态。
 - quality tooling 状态：ESLint、Prettier、EditorConfig、Commitlint、Husky/lint-staged、pnpm/package manager、`check` 脚本、alias 配置和边界扫描已接入或兼容缺口。
-- comment 与 TypeScript 命名自检结果：手写 TS/TSX/JS 注释、DTO 字段说明、TSX 关键结构注释、复杂分支注释、`I` interface 和 `T` type alias 是否满足项目规则。
+- comment 与 TypeScript 命名自检结果：手写 TS/TSX/JS 注释、DTO 字段说明、TSX 关键结构注释、复杂分支注释、`I` interface 和语义化 PascalCase type alias 是否满足项目规则。
 - 已接入 Prism 的 endpoint 和仍存在的 backend gap。
 - 已运行命令及结果；未能运行的命令要说明具体原因。
 - 残余风险，例如未覆盖的浏览器检查、后端未实现、mock 与真实服务差异、项目级 lint 噪音。

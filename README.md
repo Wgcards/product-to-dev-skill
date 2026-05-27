@@ -1,6 +1,6 @@
 ---
 name: product-to-dev-skill
-description: 当业务人员或产品人员使用自然语言描述业务需求、页面交互、数据模型、系统设计或前后端方案时使用。该 skill 用于按 route/client surface 选择 Vite React SPA、Next.js SSR/BFF 或 App placeholder 前端规范，生成可部署 Web 前端工程、前端 mock 假数据对接、按业务模块拆分且可供后续 AI 直接开发的 Java 后端开发文档、REST 风格 HTTP 接口文档和 MySQL SQL 文件；后端只生成开发文档和接口文档，不直接生成 Java 实现代码。
+description: 当业务人员或产品人员使用自然语言描述业务需求、页面交互、数据模型、系统设计或前后端方案时使用。该 skill 用于按 route/client surface 选择 Vite React SPA、Next.js SSR/BFF、App placeholder 和 monorepo/workspace 前端规范，生成可部署 Web 前端工程、前端 mock 假数据对接、按业务模块拆分且可供后续 AI 直接开发的 Java 后端开发文档、REST 风格 HTTP 接口文档和 MySQL SQL 文件；后端只生成开发文档和接口文档，不直接生成 Java 实现代码。
 ---
 
 # Product-to-Dev Skill README
@@ -39,8 +39,9 @@ description: 当业务人员或产品人员使用自然语言描述业务需求�
 2. SPA lane：B 端运营、卖家中心、管理后台、CRM、配置台、企业账户等登录后工具，以及未批准迁移的既有 Vite SPA 项目，读取 `references/frontend-react.md`、`references/frontend-architecture.md` 和对应 SPA references。
 3. SSR lane：C 端公开页、商城/商品/分类/搜索/内容详情、营销承接页、可分享页面、SEO/metadata/Open Graph/sitemap/robots、服务端预取、BFF gateway、webhook/外部 REST 边界或既有 Next.js App Router 项目，读取 `references/ssr-frontend-architecture.md`、`references/ssr-delivery-workflow.md` 和必要的 `references/ssr-*.md`。
 4. App lane：iOS/Android App、React Native、Expo、原生能力、离线同步、推送通知、deep link、App 发布或移动端导航/存储需求，读取 `references/app-frontend-architecture.md`；当前状态是 placeholder，只做识别、范围记录和缺口 handoff，不默认生成 App 代码。
-5. 混合 route 默认分流：公开 `/`、商品、分类、内容、搜索、营销、分享、sitemap、robots、metadata、OG 走 SSR；登录后的 admin、console、CRM、settings、批量操作和后台流程走 SPA，除非既有壳层是 Next.js 或 SSR 收益明确；iOS/Android 客户端、离线、推送、深链和原生权限走 App lane。
-6. 用户明确指定 SPA、SSR 或 App 时按用户指定执行，但交接说明要记录默认判断、取舍和已读取的规范路径。
+5. Monorepo / workspace：当需求涉及多个应用、共享包、Web + App、多端共用 DTO/tools/UI 或 pnpm workspace 时，同时读取 `references/monorepo-workspace.md`；新 monorepo 默认使用 `apps/*` 应用域与 `packages/*` 共享域，至少评估 `packages/types`、`packages/tools`、`packages/ui`。
+6. 混合 route 默认分流：公开 `/`、商品、分类、内容、搜索、营销、分享、sitemap、robots、metadata、OG 走 SSR；登录后的 admin、console、CRM、settings、批量操作和后台流程走 SPA，除非既有壳层是 Next.js 或 SSR 收益明确；iOS/Android 客户端、离线、推送、深链和原生权限走 App lane。
+7. 用户明确指定 SPA、SSR 或 App 时按用户指定执行，但交接说明要记录默认判断、取舍和已读取的规范路径。
 
 ## 总体工作流
 
@@ -49,8 +50,9 @@ description: 当业务人员或产品人员使用自然语言描述业务需求�
 1. 判断是已有项目增强、新前端应用、纯文档/API/SQL 交付，还是完整业务需求交付。
 2. 对已有项目，先阅读本地代码，识别框架、菜单、路由、认证、请求、mock、样式、组件库、环境变量、国际化和命名习惯。
 3. 对新前端应用、新增 route group 或新增客户端表面，先执行前端规范路由，不允许在未说明的情况下混用 SPA/SSR/App 规范。
-4. 对模糊、多角色、多部门协作或产品化需求，优先阅读 `references/intake-and-delivery.md`。
-5. 不把业务口语直接当 UI 文案；要改写成简洁、稳定、可操作的标签、状态、筛选项、按钮、错误提示和字段名。
+4. 对新 monorepo、多应用产品或 workspace 迁移，先阅读 `references/monorepo-workspace.md`，再确定 `apps/*`、`packages/types`、`packages/tools`、`packages/ui` 和 pnpm catalog 策略。
+5. 对模糊、多角色、多部门协作或产品化需求，优先阅读 `references/intake-and-delivery.md`。
+6. 不把业务口语直接当 UI 文案；要改写成简洁、稳定、可操作的标签、状态、筛选项、按钮、错误提示和字段名。
 
 ### 2. 构建交付范围
 
@@ -66,20 +68,21 @@ description: 当业务人员或产品人员使用自然语言描述业务需求�
 2. SPA 路径修改目录分层、APIClient、DTO、hooks 或组件拆分前阅读 `references/frontend-architecture.md`。
 3. SSR 路径修改 Next.js App Router、BFF、RSC/Client Component、契约、缓存、安全、运行配置、i18n 或验收门禁前，读取 `references/ssr-frontend-architecture.md` 及对应 `references/ssr-*.md`。
 4. App 路径先读取 `references/app-frontend-architecture.md`；该文件仍为 placeholder 时，只做范围识别、假设和缺口记录，不默认创建 React Native / Expo 项目。
-5. 增加 service、mock 数据、Prism/OpenAPI 或真实 API 切换点前阅读 `references/mock-and-integration.md`；SSR 路径同时阅读 `references/ssr-contracts-and-mock.md`。
-6. 创建 OpenAPI 或 API 文档前阅读 `references/api-contracts.md`。
-7. 增加国际化时阅读 `references/i18n.md`；SSR 路径同时阅读 `references/ssr-i18n.md`。
-8. 增加质量工具链时阅读 `references/quality-tooling.md`；SSR 验收同时阅读 `references/ssr-verification.md`。
-9. 前端 UI、UE、UX 设计优先使用 companion skill `ui-ux-pro-max`，用于检索产品类型、风格、字体、配色、图表、UX 和技术栈最佳实践。
-10. 如果 `ui-ux-pro-max` 当前会话不可用，继续使用 `references/design-direction.md`、`references/tailwind-v4-system.md` 和 `references/react-performance.md` 兜底，并在交接说明里提示用户按标准 skill 安装流程安装 UI UX Pro MAX；除非用户主动询问，不在本 skill 中展开安装步骤。
-11. 涉及视觉方向、Tailwind/MUI 职责边界或性能风险时，按需阅读 `references/design-direction.md`、`references/tailwind-v4-system.md`、`references/react-performance.md`。
-12. 页面必须能真实交互，不只做静态 UI；至少覆盖列表、筛选、创建或编辑、详情、状态操作、确认反馈、错误提示、空状态和加载状态。
-13. 前端数据必须从 service/mock 层取得，页面和组件不得硬编码业务记录。
-14. 新项目默认使用 Prism + OpenAPI mock，契约入口为 `mock/openapi.yaml`，examples 与 components 拆分存放。
-15. mock 或 API service 默认放在业务域 service 中，SPA 所有请求经 `src/shared/tools/APIClient`；SSR 服务端出站请求经 `src/bff/gateway`；App 路径待 App references 补齐前只记录接口与本地能力需求，已有项目服从既有请求封装。
-16. 新建 API DTO 放在 `src/types/dto/`，新增接口优先使用 `I` 前缀，新增 type alias 使用 `T` 前缀。
-17. hand-written 函数、组件、复杂分支、mock 替换点和重要 TSX 结构可添加简洁中文注释，但只在能帮助后续维护时添加。
-18. 不引入新依赖，除非它明显降低复杂度或匹配现有项目技术栈。
+5. Monorepo 或 workspace 路径创建目录、包名、workspace 脚本、共享 DTO、共享 tools、共享 UI 或 pnpm catalog 前阅读 `references/monorepo-workspace.md`。
+6. 增加 service、mock 数据、Prism/OpenAPI 或真实 API 切换点前阅读 `references/mock-and-integration.md`；SSR 路径同时阅读 `references/ssr-contracts-and-mock.md`。
+7. 创建 OpenAPI 或 API 文档前阅读 `references/api-contracts.md`。
+8. 增加国际化时阅读 `references/i18n.md`；SSR 路径同时阅读 `references/ssr-i18n.md`。
+9. 增加质量工具链时阅读 `references/quality-tooling.md`；SSR 验收同时阅读 `references/ssr-verification.md`。
+10. 前端 UI、UE、UX 设计优先使用 companion skill `ui-ux-pro-max`，用于检索产品类型、风格、字体、配色、图表、UX 和技术栈最佳实践。
+11. 如果 `ui-ux-pro-max` 当前会话不可用，继续使用 `references/design-direction.md`、`references/tailwind-v4-system.md` 和 `references/react-performance.md` 兜底，并在交接说明里提示用户按标准 skill 安装流程安装 UI UX Pro MAX；除非用户主动询问，不在本 skill 中展开安装步骤。
+12. 涉及视觉方向、Tailwind/MUI 职责边界或性能风险时，按需阅读 `references/design-direction.md`、`references/tailwind-v4-system.md`、`references/react-performance.md`。
+13. 页面必须能真实交互，不只做静态 UI；至少覆盖列表、筛选、创建或编辑、详情、状态操作、确认反馈、错误提示、空状态和加载状态。
+14. 前端数据必须从 service/mock 层取得，页面和组件不得硬编码业务记录。
+15. 新项目默认使用 Prism + OpenAPI mock；单应用契约入口为项目根 `mock/openapi.yaml`，monorepo 中为归属应用的 `apps/<app-name>/mock/openapi.yaml`，examples 与 components 拆分存放。
+16. mock 或 API service 默认放在业务域 service 中，SPA 所有请求经 `src/shared/tools/APIClient`；SSR 服务端出站请求经 `src/bff/gateway`；App 路径待 App references 补齐前只记录接口与本地能力需求，已有项目服从既有请求封装。
+17. 新建 API DTO 放在 `src/types/dto/`；monorepo 跨 app DTO 放在 `packages/types`。新增 interface 使用 `I` 前缀；新增 type alias 使用语义化 PascalCase，不强制 `T` 前缀，枚举或状态联合类型使用 `OrderStatus` 这类业务名。
+18. hand-written 函数、组件、复杂分支、mock 替换点和重要 TSX 结构可添加简洁中文注释，但只在能帮助后续维护时添加。
+19. 不引入新依赖，除非它明显降低复杂度或匹配现有项目技术栈。
 
 ### 4. 生成后端和 API 文档
 
@@ -120,7 +123,7 @@ description: 当业务人员或产品人员使用自然语言描述业务需求�
 2. 后端开发文档：`docs/backend/<module-name>.md`；多模块时可增加 `docs/backend/index.md`。
 3. HTTP API 文档：`docs/api/<module-name>.md`；多模块时可增加 `docs/api/index.md`。
 4. SQL 文件：`sql/<module-name>.sql`。
-5. Prism mock 契约：`mock/openapi.yaml`、`mock/components/`、`mock/examples/`。
+5. Prism mock 契约：单应用使用项目根 `mock/openapi.yaml`、`mock/components/`、`mock/examples/`；monorepo 使用归属应用的 `apps/<app-name>/mock/openapi.yaml`、`mock/components/`、`mock/examples/`。
 6. mock 或 API service：业务域 service 目录或既有 service 目录。
 7. 真实 API 切换辅助：新项目使用 `src/shared/tools/APIClient`。
 8. API DTO 类型：`src/types/dto/`。
@@ -167,11 +170,11 @@ description: 当业务人员或产品人员使用自然语言描述业务需求�
 
 ## Mock 与真实接口切换规范
 
-1. 新项目使用 Prism + OpenAPI 作为主 mock 体系，`mock/openapi.yaml` 为 Prism 入口。
-2. `mock/components/` 存放 schemas、parameters、responses、requestBodies；`mock/examples/` 存放拆分 example。
+1. 新项目使用 Prism + OpenAPI 作为主 mock 体系；单应用以项目根 `mock/openapi.yaml` 为 Prism 入口，monorepo 以归属应用的 `apps/<app-name>/mock/openapi.yaml` 为入口。
+2. 对应 app 的 `mock/components/` 存放 schemas、parameters、responses、requestBodies；`mock/examples/` 存放拆分 example。
 3. `openapi.yaml` 必须通过 `$ref` 引入 components 和 examples，不把所有 schema/example 堆在入口文件。
 4. Prism examples 覆盖正常数据、空数据、业务错误、表单校验错误、非法状态流转、权限或登录态异常。
-5. 所有前端 service 方法必须能映射到 `mock/openapi.yaml` 中的 path + operation。
+5. 所有前端 service 方法必须能映射到归属应用的 `mock/openapi.yaml` 中的 path + operation。
 6. 页面组件禁止直接访问 mock 数据或 Prism example；必须通过业务 service/hook。
 7. 旧项目已有 mock 体系时先沿用；需要迁移到 Prism/OpenAPI 时先说明差异和影响。
 8. 临时保留内存 mock 时，service 层每个 mock 方法旁保留真实接口替换注释，建议格式：
@@ -274,18 +277,19 @@ description: 当业务人员或产品人员使用自然语言描述业务需求�
 4. `references/module-documentation.md`：模块拆分、AI 可读文档、可追溯矩阵和可实现文档规则。
 5. `references/frontend-react.md`：React 工程、MUI 交互、类型、UI 和旧 React builder 子模块规则。
 6. `references/frontend-architecture.md`：业务域、共享域、APIClient、hooks、DTO 和组件拆分规则。
-7. `references/mock-and-integration.md`：Prism/OpenAPI mock、service 层、统一响应和真实 API 切换。
-8. `references/backend-architecture.md`：主流 Java 后端方案、中间件、缓存、MQ、一致性、性能和可观测性基线。
-9. `references/backend-java-docs.md`：Java 后端开发文档结构和深度要求。
-10. `references/api-contracts.md`：REST HTTP API、OpenAPI 契约、endpoint 模板和表单/状态规则。
-11. `references/database-mysql.md`：GX MySQL DDL 标准和 SQL 自检。
-12. `references/delivery-verification.md`：验证、目录边界和最终回复检查清单。
-13. `references/design-direction.md`：应用 UI 默认方向、品牌页、动效和视觉检查。
-14. `references/tailwind-v4-system.md`：Tailwind v4 与 MUI 职责边界、token、组件和暗色模式规则。
-15. `references/i18n.md`：i18next、react-i18next、自包含词条同步流程和中英文词条规则。
-16. `references/quality-tooling.md`：ESLint、Prettier、Commitlint、Husky、lint-staged 和 EditorConfig 规则。
-17. `references/react-performance.md`：React 性能检查项。
-18. Companion skill `ui-ux-pro-max`：前端 UI/UE/UX 设计增强 skill，用于辅助页面布局、组件、字体、配色、图表、UX 模式和前端技术栈建议；不可用时提示用户按标准 skill 安装流程安装。
+7. `references/monorepo-workspace.md`：pnpm workspace、`apps/*` / `packages/*`、共享 `types` / `tools` / `ui`、client/server/shared runtime 入口、依赖边界、catalog 版本、Turbo 可选决策、电商平台可选推荐规范和 monorepo 验收门禁。
+8. `references/mock-and-integration.md`：Prism/OpenAPI mock、service 层、统一响应和真实 API 切换。
+9. `references/backend-architecture.md`：主流 Java 后端方案、中间件、缓存、MQ、一致性、性能和可观测性基线。
+10. `references/backend-java-docs.md`：Java 后端开发文档结构和深度要求。
+11. `references/api-contracts.md`：REST HTTP API、OpenAPI 契约、endpoint 模板和表单/状态规则。
+12. `references/database-mysql.md`：GX MySQL DDL 标准和 SQL 自检。
+13. `references/delivery-verification.md`：验证、目录边界和最终回复检查清单。
+14. `references/design-direction.md`：应用 UI 默认方向、品牌页、动效和视觉检查。
+15. `references/tailwind-v4-system.md`：Tailwind v4 与 MUI 职责边界、token、组件和暗色模式规则。
+16. `references/i18n.md`：i18next、react-i18next、自包含词条同步流程和中英文词条规则。
+17. `references/quality-tooling.md`：单应用与 monorepo 的 ESLint、Prettier、Commitlint、Husky、lint-staged、EditorConfig、根配置继承和验证脚本规则。
+18. `references/react-performance.md`：React 性能检查项。
+19. Companion skill `ui-ux-pro-max`：前端 UI/UE/UX 设计增强 skill，用于辅助页面布局、组件、字体、配色、图表、UX 模式和前端技术栈建议；不可用时提示用户按标准 skill 安装流程安装。
 
 ## 执行边界
 

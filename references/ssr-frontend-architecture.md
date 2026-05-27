@@ -15,6 +15,7 @@
 - 改 security headers、cookies、CSRF、CORS、输入校验、上传下载、redirect、XSS 防线或私有数据缓存前，读 `references/ssr-security-baseline.md`。
 - 改环境变量、public/server config、secret 注入、feature flag、base URL、PM2 env 或配置校验前，读 `references/ssr-runtime-config.md`。
 - 改 next-intl、语言切换、locale 上下文、metadata 文案、BFF locale header 或 locale cache key 前，读 `references/ssr-i18n.md`。
+- 改 monorepo、workspace、`apps/*`、`packages/*`、共享 DTO/tools/UI、跨 app package 依赖或 pnpm catalog 前，读 `references/monorepo-workspace.md`。
 - 新建 SSR 项目、修改 lint/format/typecheck/commit hooks、脚本、alias import、边界扫描或质量工具链前，读 `references/quality-tooling.md`。
 - 新增或修改手写 TS/TSX/JS 代码、脚本、生成器、Route Handler、Server Action、BFF gateway/service/adapter、组件或类型定义前，按项目 AGENTS 读取 TypeScript 与 comment 规则；SSR lane 不豁免通用注释和命名规则。
 - 交付前，读 `references/ssr-verification.md`。
@@ -22,7 +23,7 @@
 ## Architecture Baseline
 
 - SSR 项目默认采用 Next.js App Router、React Server Components、TypeScript、BFF gateway、OpenAPI/Prism mock 和分环境配置。
-- 本规则只定义 SSR / BFF 架构边界，不内置 monorepo、workspace 或跨应用包治理；这些由独立 workspace 规范决定。
+- 本规则只定义 SSR / BFF 架构边界；monorepo、workspace 或跨应用包治理由 `references/monorepo-workspace.md` 决定。
 - SSR 项目必须保持 `src/app`、`src/bff`、`src/features`、`src/shared`、`mock` 的职责边界；目标项目已有更强目录约定时按目标项目执行。
 - C 端公开内容、商品详情、分类列表、可分享页面和 SEO 关键页面优先评估 SSR；B 端运营、卖家、管理、企业内网等登录后工具默认优先评估 SPA，除非存在明确 SSR 收益。
 - `src/app` 只负责路由、布局、服务端渲染入口、metadata、error/loading/not-found 和 API 边界入口。
@@ -31,7 +32,7 @@
 - `src/shared` 只放浏览器安全且跨业务复用的 UI、hooks、工具和常量；BFF-only helper 放 `src/bff/shared`。
 - SSR 新项目仍采用 MUI-first，但 MUI 在 SSR 项目中定位为 SSR-compatible Client Component 交互体系，不作为 Server Component primitive；服务端数据、metadata、缓存和鉴权仍归 `src/app` / `src/bff`。
 - 使用 MUI 的 Next.js App Router 项目必须接入与 Next 主版本匹配的 `@mui/material-nextjs/*-appRouter` cache provider，统一挂载 MUI `ThemeProvider`，并声明 Emotion/CSS 注入、防首屏样式闪烁和 Tailwind CSS layer 策略。
-- `mock/openapi.yaml` 是 mock runtime 的事实来源；SSR 服务端数据也必须能经 Prism/OpenAPI 运行。
+- SSR app 根目录下的 `mock/openapi.yaml` 是 mock runtime 的事实来源；SSR 服务端数据也必须能经 Prism/OpenAPI 运行。
 - SSR/BFF 项目必须提供统一 logger 层，推荐落点为 `packages/tools/logger` 或项目等价目录；日志层要覆盖本地/线上、client/server、request id、普通日志、接口日志、上游调用摘要、降级/异常日志和敏感字段脱敏策略。
 - 生产环境客户端 console 必须自动清除或禁用；生产环境使用 PM2 启动 Next 服务时，必须声明 stdout/stderr、JSON line、实例标识、logrotate 或日志平台采集策略。
 - 客户端 Web Vitals 与浏览器错误按项目需要接入，但缺口必须在 handoff 中声明。
@@ -40,7 +41,7 @@
 - SSR/BFF 项目默认使用 `next-intl` 管理语言上下文；新项目不使用 locale 路由，语言切换通过 next-intl 更新 locale 后刷新当前页面相关接口，并提供 loading/pending 状态。
 - SSR 新项目必须继承通用 quality tooling 基线，包括 ESLint flat config、Prettier、EditorConfig、Commitlint、Husky/lint-staged、pnpm 脚本、`check` 聚合命令和触达文件 format check；已有项目按兼容优先，但缺口要在 handoff 中声明。
 - SSR 新增手写代码必须继承通用 comment 规则：函数、组件、Route Handler、Server Action、BFF gateway/service/adapter、请求封装、runtime 接线、复杂分支、类型和字段都要有能说明职责、边界或业务语义的中文注释。
-- SSR TypeScript 代码继续使用 `I` 前缀 interface、`T` 前缀 type alias；DTO、view model、action result、request context 和 endpoint id 类型都不能例外。
+- SSR TypeScript 代码继续使用 `I` 前缀 interface；type alias 使用语义化 PascalCase，不强制 `T` 前缀；DTO、view model、action result、request context、endpoint id、枚举或状态联合类型都不能例外。
 - SSR 应用代码继续遵守通用 import 边界：跨目录 import 使用配置 alias，同目录允许 `./`，不要用 `../` 或 `../../../` 把 App Router、BFF、features、shared 边界绕开。
 - Draft / Preview / CMS 预览态暂不纳入当前 SSR 通用基线；需要时单独设计。
 

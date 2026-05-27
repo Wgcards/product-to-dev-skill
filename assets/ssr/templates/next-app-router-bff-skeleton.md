@@ -62,7 +62,7 @@ mock/
  * 后端契约的稳定 endpoint id。
  * 业务代码只引用这些 id，避免在 service 中散落 method/path/cache 细节。
  */
-export type TEndpointId = 'product.detail.get';
+export type EndpointId = 'product.detail.get';
 
 /**
  * 单个后端 endpoint 的调用配置。
@@ -89,7 +89,7 @@ export interface IEndpointConfig {
 /**
  * SSR/BFF 项目的 endpoint 注册表。
  */
-export const endpointRegistry: Record<TEndpointId, IEndpointConfig> = {
+export const endpointRegistry: Record<EndpointId, IEndpointConfig> = {
   'product.detail.get': {
     method: 'GET',
     path: '/api/v1/products/{slug}',
@@ -106,7 +106,7 @@ import 'server-only';
 
 import { getServerRuntimeConfig } from '@/bff/shared/runtimeConfig';
 
-import { endpointRegistry, type TEndpointId } from './endpointRegistry';
+import { endpointRegistry, type EndpointId } from './endpointRegistry';
 
 /**
  * BFF 出站请求的上下文。
@@ -148,7 +148,7 @@ export interface IBackendEnvelope<TData> {
  * 统一执行 BFF 出站请求，并校验后端 wrapper。
  */
 export async function requestBackend<TData>(
-  endpointId: TEndpointId,
+  endpointId: EndpointId,
   context: IRequestContext,
   pathParams: Record<string, string> = {},
 ): Promise<IBackendEnvelope<TData>> {
@@ -312,7 +312,7 @@ export default async function ProductPage({ params }: IProductPageProps) {
 ## Handoff Checklist
 
 - 通用 quality tooling 已接入或标注兼容缺口：ESLint、Prettier、EditorConfig、Commitlint、Husky/lint-staged、pnpm/package manager、`check` 脚本、alias 配置和边界扫描。
-- 手写代码已自检 comment 与 TS 命名：函数、组件、Route Handler、Server Action、BFF gateway/service/adapter、DTO 字段、复杂分支都有中文注释，interface 使用 `I` 前缀，type alias 使用 `T` 前缀。
+- 手写代码已自检 comment 与 TS 命名：函数、组件、Route Handler、Server Action、BFF gateway/service/adapter、DTO 字段、复杂分支都有中文注释，interface 使用 `I` 前缀，type alias 使用语义化 PascalCase。
 - 应用代码跨目录 import 使用 alias，同目录才使用 `./`，没有用父级相对路径绕过 `src/app`、`src/bff`、`src/features`、`src/shared` 边界。
 - Next 主版本已声明；Next 16+ 使用 `proxy.ts`，仍需 Edge runtime 时记录 `middleware.ts` 兼容例外。
 - 公开页、登录态页、Route Handler 和 Server Action 的 rendering/cache 策略已声明。

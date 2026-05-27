@@ -1,17 +1,17 @@
 /*
  * 指标状态的视觉语义，用于让业务数据和展示色彩保持解耦。
  */
-export type TMetricTone = 'neutral' | 'good' | 'warning' | 'danger';
+export type MetricTone = 'neutral' | 'good' | 'warning' | 'danger';
 
 /*
  * 事项流转状态编码，真实项目中应与接口文档和数据库状态字段保持一致。
  */
-export type TItemStatus = 'pending_review' | 'in_review' | 'in_progress' | 'ready_to_close';
+export type ItemStatus = 'pending_review' | 'in_review' | 'in_progress' | 'ready_to_close';
 
 /*
  * 列表筛选状态，all 仅用于前端查询条件。
  */
-export type TItemStatusFilter = 'all' | TItemStatus;
+export type ItemStatusFilter = 'all' | ItemStatus;
 
 /*
  * 单个顶部指标的业务含义、当前值与趋势说明。
@@ -32,7 +32,7 @@ export interface IMetricItem {
   /*
    * 指标视觉语义，不直接绑定具体颜色值。
    */
-  tone: TMetricTone;
+  tone: MetricTone;
 }
 
 /*
@@ -72,7 +72,7 @@ export interface ISampleItem {
   /*
    * 当前流转状态编码。
    */
-  status: TItemStatus;
+  status: ItemStatus;
   /*
    * 当前流转状态展示文案。
    */
@@ -94,7 +94,7 @@ export interface IStatusOption {
   /*
    * 筛选状态值。
    */
-  value: TItemStatusFilter;
+  value: ItemStatusFilter;
   /*
    * 状态展示文案。
    */
@@ -144,7 +144,7 @@ export interface IItemQuery {
   /*
    * 状态筛选条件。
    */
-  status: TItemStatusFilter;
+  status: ItemStatusFilter;
   /*
    * 当前页码，从 1 开始。
    */

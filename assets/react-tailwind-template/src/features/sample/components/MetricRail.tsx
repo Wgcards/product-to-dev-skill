@@ -1,7 +1,7 @@
 import { ArrowUpRight, CircleAlert, CircleCheck, Minus } from 'lucide-react';
-import type { IMetricItem, TMetricTone } from '@/features/sample/types/sample';
+import type { IMetricItem, MetricTone } from '@/features/sample/types/sample';
 
-const toneClassName: Record<TMetricTone, string> = {
+const toneClassName: Record<MetricTone, string> = {
   neutral: 'text-muted-foreground bg-muted',
   good: 'text-success bg-success/10',
   warning: 'text-warning bg-warning/10',

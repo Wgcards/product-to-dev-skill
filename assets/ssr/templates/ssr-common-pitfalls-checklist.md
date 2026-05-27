@@ -7,7 +7,7 @@
 - 新建 SSR 项目继承通用 quality tooling：ESLint flat config、Prettier、EditorConfig、Commitlint、Husky/lint-staged、pnpm 脚本和 `check` 聚合命令。
 - 已有 SSR 项目优先兼容既有工具链，但 lint、format、typecheck、alias import、边界扫描或 commit hooks 缺口要写入 handoff。
 - 手写 TS/TSX/JS 代码按项目 comment 规则补中文注释；函数、组件、Route Handler、Server Action、BFF gateway/service/adapter、请求封装、类型字段和复杂分支都不能漏。
-- TypeScript interface 使用 `I` 前缀，type alias 使用 `T` 前缀；DTO、view model、action state、request context 和 endpoint id 类型都要自检。
+- TypeScript interface 使用 `I` 前缀；type alias 使用语义化 PascalCase，不强制 `T` 前缀；DTO、view model、action state、request context、endpoint id、枚举或状态联合类型都要自检。
 - 跨目录 import 使用项目 alias，同目录允许 `./`；不要用 `../` 或 `../../../` 绕过 `src/app`、`src/bff`、`src/features`、`src/shared` 边界。
 - `page.tsx` 和 `route.ts` 没有放在同一路由目录。
 - Next 主版本已声明；Next 15+ 的 `params`、`searchParams`、`cookies()`、`headers()` 按 async API 使用。

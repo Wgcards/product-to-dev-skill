@@ -2,17 +2,17 @@
 
 ## Directory Constraints
 
-- Frontend code should go in `frontend/`, `web/`, or the user-specified directory.
+- Frontend code should go in `frontend/`, `web/`, `apps/<app-name>/` for monorepo apps, or the user-specified directory.
 - Backend development docs should be split by module in `docs/backend/<module-name>.md`.
 - API docs should be split by module in `docs/api/<module-name>.md`.
 - Add `docs/backend/index.md` and `docs/api/index.md` only when multiple modules need navigation.
 - SQL files should go in `sql/`; name files by module, such as `sql/payment_order.sql`.
-- New-project mock data should stay in Prism examples under `mock/examples/`; do not reintroduce runtime `src/mocks/mock-data.ts` for the default template.
+- New-project mock data should stay in Prism examples under `mock/examples/` relative to the single-app root or owning app root; do not reintroduce runtime `src/mocks/mock-data.ts` for the default template.
 - When Prism/OpenAPI mock support exists, runtime mock data must be served by Prism. Runtime services must not import fixture files or return hardcoded `{ data, code, codeMsg }` objects as mock-mode fallback.
 - Mock or API service methods should stay in `src/features/<module>/service/` or the existing service directory for legacy projects.
-- New projects should keep Prism contracts under `mock/`.
-- New projects should keep real API switch logic in `src/shared/tools/APIClient`.
-- New projects should keep DTOs in `src/types/dto/` and locale files in `src/locale/`.
+- New single-app projects should keep Prism contracts under project-root `mock/`; monorepo apps should keep them under `apps/<app-name>/mock/`.
+- New single-app projects should keep real API switch logic in `src/shared/tools/APIClient`; monorepo apps keep app-local request logic under their own `src/shared/tools/APIClient` unless the capability is explicitly promoted to `packages/tools`.
+- New single-app projects should keep DTOs in `src/types/dto/` and locale files in `src/locale/`; monorepo cross-app DTOs belong in `packages/types`, while app-private DTOs stay in the owning app.
 - Do not generate unrelated template docs, empty directories, or unusable placeholder files.
 
 ## Verification Checklist
@@ -28,9 +28,9 @@ Frontend:
 - Form validation errors appear under the relevant form controls.
 - Routes are accessible.
 - Core interactions operate: filter/search, create/edit, detail, status action, confirmation, error, empty, and loading states.
-- All requests go through `src/shared/tools/APIClient` in new projects, or through the existing approved request wrapper.
+- All requests go through the app-local `src/shared/tools/APIClient` in new projects, through an explicitly promoted `packages/tools` request factory, or through the existing approved request wrapper.
 - Domain fetch hooks expose at least `data`, `loading`, and `error` when generated.
-- Prism can read `mock/openapi.yaml`; OpenAPI examples are split and referenced with `$ref`.
+- Prism can read `mock/openapi.yaml` relative to the single-app root or owning app root; OpenAPI examples are split and referenced with `$ref`.
 - Every runtime frontend service method that represents an HTTP/mock endpoint maps to an OpenAPI path and `operationId` when Prism/OpenAPI mock support exists.
 - API docs endpoints marked implemented exist in OpenAPI; future endpoints are explicitly marked `Planned`, `Not implemented in frontend`, or `Not available in Prism mock`.
 - OpenAPI schemas for frontend-consumed objects and array items are explicit enough to catch DTO drift; broad `additionalProperties: true` is used only for documented extension bags.

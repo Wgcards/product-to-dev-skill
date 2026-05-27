@@ -77,7 +77,7 @@ Read `design-direction.md` for landing page versus app choices, `tailwind-v4-sys
 ## TypeScript And Comments
 
 - Use `interface` names with an `I` prefix.
-- Use `type` aliases with a `T` prefix.
+- Use semantic PascalCase `type` aliases; do not force a `T` prefix. Use business names such as `OrderStatus` for enum-like unions or status types.
 - Use React component names in PascalCase.
 - Use normal files and directories in kebab-case unless the project already uses another convention.
 - Add concise Chinese comments only where they help: mock replacement points, important TSX sections, complex business branches, service behavior, and non-obvious formatter logic.

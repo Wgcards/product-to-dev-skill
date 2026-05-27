@@ -80,7 +80,7 @@ Use each folder by ownership, not by file extension alone:
 ## DTOs And Types
 
 - Put API DTOs in `src/types/dto/`.
-- `interface` names use `I` prefix; `type` aliases use `T` prefix.
+- `interface` names use `I` prefix; `type` aliases use semantic PascalCase without a forced `T` prefix. Use business names such as `OrderStatus` for enum-like unions or status types.
 - DTO fields must match OpenAPI schemas, API docs, Prism examples, and service payloads.
 - Required/optional flags, enums, nested object shapes, array item shapes, and error payloads must match OpenAPI. OpenAPI schemas for frontend-consumed data must be explicit enough to catch drift.
 - Do not use OpenAPI DTO generation by default; hand-write DTOs from the contract and business semantics.

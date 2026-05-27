@@ -3,7 +3,7 @@ import { createContext, useContext } from 'react';
 /*
  * 全局反馈等级，对应 MUI Alert 的标准语义。
  */
-export type TFeedbackSeverity = 'success' | 'info' | 'warning' | 'error';
+export type FeedbackSeverity = 'success' | 'info' | 'warning' | 'error';
 
 /*
  * 展示 Snackbar 时需要传入的消息和语义。
@@ -16,7 +16,7 @@ export interface IFeedbackPayload {
   /*
    * 提示语义，默认按普通信息处理。
    */
-  severity?: TFeedbackSeverity;
+  severity?: FeedbackSeverity;
 }
 
 /*
